@@ -6,35 +6,43 @@ export default gql`
     mutation: Mutation
   }
 
+  scalar DateTime
+  scalar EmailAddress 
+  scalar PhoneNumber
+  scalar Currency
+  scalar PositiveInt
+
   type Query {
-    login(email: String!, password: String!): User!
+    login(
+      email: EmailAddress
+      password: String!
+    ): User!
   }
 
   type Mutation {
     register(
-      email: String!
+      email: EmailAddress!
       password: String!
       firstName: String!
       lastName: String!
-      phoneNumber: Int
+      phoneNumber: PhoneNumber
     ): User
     updateUser(
-      email: String!
-      password: String
-      firstName: String
-      lastName: String
-      phoneNumber: Int
+      userDetails: UserDetailsInput
     ): User
-    updateTrips(email: String!, trip: TripInput): TripList
+    updateTrips(
+      email: EmailAddress!
+      trip: TripInput
+    ): TripList
   }
 
   type User {
     _id: ID!
-    email: String!
+    email: EmailAddress
     password: String!
     firstName: String
     lastName: String!
-    phoneNumber: Int
+    phoneNumber: PhoneNumber
     favouritedTrips: [Trip!]
     bookedTrips: [Trip!]
   }
@@ -50,20 +58,22 @@ export default gql`
     booked: Boolean!
     startLocation: String!
     endLocation: String!
-    startDate: String!
-    destinations: String!
+    startDate: DateTime
+    destinations: DateTime
     flights: [Flight]
-    price: Int
+    currency: Currency
+    price: PositiveInt
   }
-
+  
   type Flight {
     _id: ID!
     origin: String!
     destination: String!
-    departureDate: String!
-    arrivalDate: String!
+    departureDate: DateTime
+    arrivalDate: DateTime
     airline: String!
-    price: Int!
+    currency: Currency
+    price: PositiveInt
   }
 
   type Destination {
@@ -73,16 +83,25 @@ export default gql`
     city: String!
     country: String!
   }
+  
+  input UserDetailsInput {
+    email: EmailAddress!
+    password: String
+    firstName: String
+    lastName: String
+    phoneNumber: PhoneNumber
+  }
 
   input TripInput {
     _id: ID!
     booked: Boolean!
     startLocation: String!
     endLocation: String!
-    startDate: String!
-    destinations: String!
+    startDate: DateTime
+    destinations: DateTime
     flights: [FlightInput]
-    price: Int
+    currency: Currency
+    price: PositiveInt
   }
 
   input FlightInput {
@@ -92,7 +111,8 @@ export default gql`
     departureDate: String!
     arrivalDate: String!
     airline: String!
-    price: Int!
+    currency: Currency
+    price: PositiveInt!
   }
 
   input DestinationInput {

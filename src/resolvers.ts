@@ -1,11 +1,15 @@
-export default {
-  // Resolver Args: root, args, context, info
-  Query: {
-    login: (): string => 'Hello World!',
-  },
-  Mutation: {
-    register: (): string => 'Hello World!',
-    updateUser: (): string => 'Hello World!',
-    updateTrips: (): string => 'Hello World!',
-  },
+import {
+  DateTimeResolver,
+  EmailAddressResolver,
+  PhoneNumberResolver,
+  CurrencyResolver,
+  PositiveIntResolver,
+} from 'graphql-scalars';
+
+export const resolvers = {
+  DateTime: DateTimeResolver,
+  EmailAddress: EmailAddressResolver,
+  PhoneNumber: PhoneNumberResolver,
+  Currency: CurrencyResolver,
+  PositiveInt: PositiveIntResolver,
 };

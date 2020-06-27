@@ -1,12 +1,27 @@
 import { ApolloServer } from 'apollo-server';
+import {
+  DateTimeMock,
+  EmailAddressMock,
+  PhoneNumberMock,
+  CurrencyMock,
+  PositiveIntMock,
+} from 'graphql-scalars';
 
 import { environment } from './environment';
-import resolvers from './resolvers';
+import { resolvers } from './resolvers';
 import typeDefs from './type-defs.graphql';
 
 const server = new ApolloServer({
   resolvers,
   typeDefs,
+  mocks: {
+    DateTime: DateTimeMock,
+    EmailAddress: EmailAddressMock,
+    PhoneNumber: PhoneNumberMock,
+    Currency: CurrencyMock,
+    PositiveInt: PositiveIntMock,
+  }, // TODO: Remove in PROD.
+  mockEntireSchema: false, // TODO: Remove in PROD.
   introspection: environment.apollo.introspection,
   playground: environment.apollo.playground,
 });
