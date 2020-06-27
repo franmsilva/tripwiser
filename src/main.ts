@@ -1,4 +1,11 @@
-console.log('Hello, Nils!');
+import { ApolloServer } from 'apollo-server';
+
+import resolvers from './resolvers';
+import * as typeDefs from './type-defs.graphql';
+
+const server = new ApolloServer({ resolvers, typeDefs });
+
+server.listen().then(({ url }) => console.log(`Server ready at ${url}.`));
 
 // Hot Module Replacement
 if (module.hot) {
