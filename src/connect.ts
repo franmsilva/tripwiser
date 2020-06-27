@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const { mongooseEnv } = require('./environment');
+import mongoose from 'mongoose';
+import { environment } from './environment';
 
-mongoose.connect(mongooseEnv.uri, mongooseEnv.config);
+mongoose.connect(environment.database.uri, environment.database.config);
 const db = mongoose.connection;
 
 db.once('open', () => {

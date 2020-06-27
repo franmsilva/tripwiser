@@ -5,7 +5,7 @@ interface Environment {
     introspection: boolean;
     playground: boolean;
   };
-  mongoose: {
+  database: {
     uri: string;
     config: {
       useNewUrlParser: boolean;
@@ -22,7 +22,7 @@ export const environment: Environment = {
     introspection: process.env.APOLLO_INTROSPECTION === 'true',
     playground: process.env.APOLLO_PLAYGROUND === 'true',
   },
-  mongoose: {
+  database: {
     uri: process.env.DB_URI || '',
     config: {
       useNewUrlParser: true,

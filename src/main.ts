@@ -10,6 +10,7 @@ import {
 import { environment } from './environment';
 import { resolvers } from './resolvers';
 import typeDefs from './type-defs.graphql';
+require('./connect');
 
 const server = new ApolloServer({
   resolvers,
