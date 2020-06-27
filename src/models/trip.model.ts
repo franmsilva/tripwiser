@@ -13,8 +13,35 @@ export interface ITrip extends Document {
   price: number;
 }
 
-interface IDestination {}
-interface IFlight {}
+interface IDestination {
+  airport: string,
+  airportCode: string,
+  city: string,
+  country: string,
+}
+const DestinationSchema: Schema = new Schema({
+  airline: {
+    type: String
+  },
+  airportCode: {
+    type: String
+  },
+  city: {
+    type: String
+  },
+  country: {
+    type: String
+  }
+})
+interface IFlight {
+  origin: string,
+  destination: string,
+  depatureDate: string,
+  arrivalDate: string,
+  airline: string,
+  currency: string,
+  price: number,
+}
 
 const UserSchema: Schema = new Schema({
   creator: {
