@@ -38,7 +38,7 @@ export default gql`
 
   type User {
     _id: ID!
-    email: EmailAddress
+    email: EmailAddress!
     password: String!
     firstName: String
     lastName: String!
@@ -60,7 +60,7 @@ export default gql`
     startLocation: String!
     endLocation: String!
     startDate: DateTime
-    destinations: [Destination]
+    destinations: [Place]
     flights: [Flight]
     currency: Currency
     price: PositiveInt
@@ -68,8 +68,8 @@ export default gql`
   
   type Flight {
     _id: ID!
-    origin: String!
-    destination: String!
+    origin: Place
+    destination: Place
     departureDate: DateTime
     arrivalDate: DateTime
     airline: String!
@@ -77,12 +77,15 @@ export default gql`
     price: PositiveInt
   }
 
-  type Destination {
+  type Place { 
     _id: ID!
-    airport: String!
-    aiportCode: String!
-    city: String!
-    country: String!
+    airportId: String!
+    airportName: String!
+    location: String!
+    cityId: String!
+    cityName: String!
+    countryId: String!
+    countryName: String!
   }
   
   input UserDetailsInput {
@@ -96,10 +99,10 @@ export default gql`
   input TripInput {
     _id: ID!
     booked: Boolean!
-    startLocation: String!
-    endLocation: String!
+    startLocation: Place!
+    endLocation: Place!
     startDate: DateTime
-    destinations: DateTime
+    destinations: [PlaceInput]
     flights: [FlightInput]
     currency: Currency
     price: PositiveInt
@@ -116,11 +119,14 @@ export default gql`
     price: PositiveInt!
   }
 
-  input DestinationInput {
+  input PlaceInput {
     _id: ID!
-    airport: String!
-    aiportCode: String!
-    city: String!
-    country: String!
+    airportId: String!
+    airportName: String!
+    location: String!
+    cityId: String!
+    cityName: String!
+    countryId: String!
+    countryName: String!
   }
 `

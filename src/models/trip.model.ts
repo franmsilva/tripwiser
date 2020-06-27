@@ -1,49 +1,21 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { IUser } from './user.model';
+import { IFlight } from './flight.model';
+import { IPlace } from './place.model';
 
 export interface ITrip extends Document {
-  creator: IUser;
+  creator: IUser['_id'];
   booked: boolean;
-  startLocation: string;
-  endLocation: string;
+  startLocation: IPlace['_id'];
+  endLocation: IPlace['_id'];
   startDate: Date;
-  destinations: IDestination[];
-  flights: IFlight[];
+  destinations: IPlace['_id'];
+  flights: IFlight['_id'];
   currency: string;
   price: number;
 }
 
-interface IDestination {
-  airport: string,
-  airportCode: string,
-  city: string,
-  country: string,
-}
-const DestinationSchema: Schema = new Schema({
-  airline: {
-    type: String
-  },
-  airportCode: {
-    type: String
-  },
-  city: {
-    type: String
-  },
-  country: {
-    type: String
-  }
-})
-interface IFlight {
-  origin: string,
-  destination: string,
-  depatureDate: string,
-  arrivalDate: string,
-  airline: string,
-  currency: string,
-  price: number,
-}
-
-const UserSchema: Schema = new Schema({
+const TripSchema: Schema = new Schema({
   creator: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -53,12 +25,13 @@ const UserSchema: Schema = new Schema({
     required: true,
   },
   startLocation: {
-    type: String,
-    required: true,
+    type: Schema.Types.ObjectId,
+    ref: 'Place',
   },
+
   endLocation: {
-    type: String,
-    required: true,
+    type: Schema.Types.ObjectId,
+    ref: 'Place',
   },
   startDate: {
     type: Date,
@@ -67,7 +40,7 @@ const UserSchema: Schema = new Schema({
   destinations: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'Destination',
+      ref: 'Place',
     },
   ],
   flights: [
@@ -76,12 +49,8 @@ const UserSchema: Schema = new Schema({
       ref: 'Flight',
     },
   ],
-  currency: {
-    type: String,
-  },
-  price: {
-    type: Number,
-  },
+  currency: String,
+  price: Number,
 });
 
-export default mongoose.model<IUser>('User', UserSchema);
+export default mongoose.model<ITrip>('Trip', TripSchema);
