@@ -5,6 +5,15 @@ interface Environment {
     introspection: boolean;
     playground: boolean;
   };
+  mongoose: {
+    uri: string;
+    config: {
+      useNewUrlParser: boolean;
+      useCreateIndex: boolean;
+      useFindAndModify: boolean;
+      useUnifiedTopology: boolean;
+    };
+  };
   port: number | string;
 }
 
@@ -12,6 +21,15 @@ export const environment: Environment = {
   apollo: {
     introspection: process.env.APOLLO_INTROSPECTION === 'true',
     playground: process.env.APOLLO_PLAYGROUND === 'true',
+  },
+  mongoose: {
+    uri: process.env.DB_URI || '',
+    config: {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+      useUnifiedTopology: true,
+    },
   },
   port: process.env.PORT || defaultPort,
 };

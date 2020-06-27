@@ -55,11 +55,12 @@ export default gql`
 
   type Trip {
     _id: ID!
+    creator: ID!
     booked: Boolean!
     startLocation: String!
     endLocation: String!
     startDate: DateTime
-    destinations: DateTime
+    destinations: [Destination]
     flights: [Flight]
     currency: Currency
     price: PositiveInt
