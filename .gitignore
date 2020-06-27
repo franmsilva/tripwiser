@@ -8,3 +8,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+
+# webpack hotupdate
+*.hot-update.json
+*.hot-update.js
