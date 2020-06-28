@@ -7,12 +7,17 @@ import {
 } from 'graphql-scalars';
 import User from './models/user.model';
 
+interface LoginUserBody {
+  email: string ,
+  password: string,
+}
+
 export const resolvers = {
   Query: {
-    async login(_: any, args: any) {
-      const user = await User.findOne({ email: args.email });
+    async login(_: any, {email, password}: LoginUserBody) {
+      const user = await User.findOne({ email });
       if (!user) return 'no user';
-      //TODO: verify pw
+      if (user.password !== password) return 'no user';  //TODO: bcrypt
       return user;
     },
   },
