@@ -9,28 +9,31 @@ export interface IPlace extends Document {
   countryId: string;
   countryName: string;
 }
-const PlaceSchema: Schema = new Schema({
-  airportId: {
-    type: String,
+const PlaceSchema: Schema = new Schema(
+  {
+    airportId: {
+      type: String,
+    },
+    airportName: {
+      type: String,
+    },
+    location: {
+      type: String,
+    },
+    cityId: {
+      type: String,
+    },
+    cityName: {
+      type: String,
+    },
+    countryId: {
+      type: String,
+    },
+    countryName: {
+      type: String,
+    },
   },
-  airportName: {
-    type: String,
-  },
-  location: {
-    type: String,
-  },
-  cityId: {
-    type: String,
-  },
-  cityName: {
-    type: String,
-  },
-  countryId: {
-    type: String,
-  },
-  countryName: {
-    type: String,
-  },
-});
+  { timestamps: true }
+);
 
 export default mongoose.model<IPlace>('Place', PlaceSchema);

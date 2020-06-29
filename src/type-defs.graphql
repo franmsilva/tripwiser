@@ -14,26 +14,24 @@ export default gql`
 
   type Query {
     login(
-      email: EmailAddress
+      email: EmailAddress!
       password: String!
     ): User!
   }
 
   type Mutation {
     register(
-      email: EmailAddress!
-      password: String!
-      firstName: String!
-      lastName: String!
-      phoneNumber: PhoneNumber
-    ): User
+      userDetails: UserRegisterInput
+    ): User!
     updateUser(
-      userDetails: UserDetailsInput
-    ): User
-    updateTrips(
-      email: EmailAddress!
-      trip: TripInput
-    ): TripList
+      userDetails: UserUpdateInput
+    ): User!
+    createTrip(
+      tripInput: TripCreateInput
+    ): Trip!
+    updateTrip(
+      tripInput: TripUpdateInput
+    ): Trip!
   }
 
   type User {
@@ -43,38 +41,31 @@ export default gql`
     firstName: String
     lastName: String!
     phoneNumber: PhoneNumber
-    favouritedTrips: [Trip!]
-    bookedTrips: [Trip!]
-  }
-
-  type TripList {
-    _id: ID
-    favouritedTrips: [Trip]
-    bookedTrips: [Trip]
+    trips: [Trip]!
   }
 
   type Trip {
     _id: ID!
     creator: ID!
     booked: Boolean!
-    startLocation: String!
-    endLocation: String!
-    startDate: DateTime
-    destinations: [Place]
-    flights: [Flight]
-    currency: Currency
-    price: PositiveInt
+    startLocation: Place!
+    endLocation: Place!
+    startDate: DateTime!
+    destinations: [Place]!
+    flights: [Flight]!
+    currency: Currency!
+    price: PositiveInt!
   }
   
   type Flight {
     _id: ID!
-    origin: Place
-    destination: Place
-    departureDate: DateTime
-    arrivalDate: DateTime
+    origin: Place!
+    destination: Place!
+    departureDate: DateTime!
+    arrivalDate: DateTime!
     airline: String!
-    currency: Currency
-    price: PositiveInt
+    currency: Currency!
+    price: PositiveInt!
   }
 
   type Place { 
@@ -88,7 +79,15 @@ export default gql`
     countryName: String!
   }
   
-  input UserDetailsInput {
+  input UserRegisterInput {
+    email: EmailAddress!
+    password: String!
+    firstName: String!
+    lastName: String!
+    phoneNumber: PhoneNumber
+  }
+
+  input UserUpdateInput {
     email: EmailAddress!
     password: String
     firstName: String
@@ -96,31 +95,50 @@ export default gql`
     phoneNumber: PhoneNumber
   }
 
-  input TripInput {
-    _id: ID!
+  input UserIdInput {
+    _id: String!
+  }
+  
+  input placeIdInput {
+    airportId: String!
+  }
+
+  input TripCreateInput {
+    creator: String!
     booked: Boolean!
-    startLocation: PlaceInput!
-    endLocation: PlaceInput!
+    startLocation: String!
+    endLocation: String!
+    startDate: DateTime!
+    destinations: [String!]!
+    flights: [FlightInput!]!
+    currency: Currency!
+    price: PositiveInt!
+  }
+
+  input TripUpdateInput {
+    _id: ID!
+    creator: UserIdInput!
+    booked: Boolean
+    startLocation: placeIdInput
+    endLocation: placeIdInput
     startDate: DateTime
-    destinations: [PlaceInput]
-    flights: [FlightInput]
+    destinations: [placeIdInput!]
+    flights: [FlightInput!]
     currency: Currency
     price: PositiveInt
   }
 
   input FlightInput {
-    _id: ID!
     origin: String!
     destination: String!
-    departureDate: String!
-    arrivalDate: String!
+    departureDate: DateTime!
+    arrivalDate: DateTime!
     airline: String!
-    currency: Currency
+    currency: Currency!
     price: PositiveInt!
   }
 
   input PlaceInput {
-    _id: ID!
     airportId: String!
     airportName: String!
     location: String!

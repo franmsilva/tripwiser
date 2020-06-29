@@ -4,7 +4,7 @@ import { IFlight } from './flight.model';
 import { IPlace } from './place.model';
 
 export interface ITrip extends Document {
-  creator: IUser['_id'];
+  creator: string; // User ID
   booked: boolean;
   startLocation: IPlace['_id'];
   endLocation: IPlace['_id'];
@@ -15,42 +15,45 @@ export interface ITrip extends Document {
   price: number;
 }
 
-const TripSchema: Schema = new Schema({
-  creator: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  booked: {
-    type: Boolean,
-    required: true,
-  },
-  startLocation: {
-    type: Schema.Types.ObjectId,
-    ref: 'Place',
-  },
-
-  endLocation: {
-    type: Schema.Types.ObjectId,
-    ref: 'Place',
-  },
-  startDate: {
-    type: Date,
-    required: true,
-  },
-  destinations: [
-    {
+const TripSchema: Schema = new Schema(
+  {
+    creator: {
+      type: String,
+      required: true,
+    },
+    booked: {
+      type: Boolean,
+      required: true,
+    },
+    startLocation: {
       type: Schema.Types.ObjectId,
       ref: 'Place',
     },
-  ],
-  flights: [
-    {
+
+    endLocation: {
       type: Schema.Types.ObjectId,
-      ref: 'Flight',
+      ref: 'Place',
     },
-  ],
-  currency: String,
-  price: Number,
-});
+    startDate: {
+      type: Date,
+      required: true,
+    },
+    destinations: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Place',
+      },
+    ],
+    flights: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Flight',
+      },
+    ],
+    currency: String,
+    price: Number,
+  },
+  { timestamps: true }
+);
 
 export default mongoose.model<ITrip>('Trip', TripSchema);
