@@ -4,7 +4,7 @@ import { IFlight } from './flight.model';
 import { IPlace } from './place.model';
 
 export interface ITrip extends Document {
-  creator: string; // User ID
+  creator: string; // User ID as Reference
   booked: boolean;
   startLocation: IPlace['_id'];
   endLocation: IPlace['_id'];

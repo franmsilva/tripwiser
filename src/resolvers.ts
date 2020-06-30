@@ -92,7 +92,7 @@ export const resolvers = {
     },
   },
   Mutation: {
-    async register(_: any, { userDetails }: RegisterUserBody) {
+    async registerUser(_: any, { userDetails }: RegisterUserBody) {
       const user = await User.create(userDetails);
       user.token = jwt.sign({_id: user._id}, SECRETKEY);
       return user;
@@ -138,9 +138,11 @@ export const resolvers = {
       //fill new flights
       const { flights } = tripInput;
       tripInput.flights = [];
-      for (let i = 0; i < flights.length; i++) {
-        const flightDB = await Flight.create(flights[i]);
-        tripInput.flights.push(flightDB._id);
+      if (flights && flights.length > 0) {
+        for (let i = 0; i < flights.length; i++) {
+          const flightDB = await Flight.create(flights[i]);
+          tripInput.flights.push(flightDB._id);
+        }
       }
       //create updated trip
       const updateTrip = Object.assign(trip, tripInput);

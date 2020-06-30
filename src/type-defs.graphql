@@ -19,13 +19,14 @@ export default gql`
       email: EmailAddress!
       password: String!
     ): User!
+    # TODO: Logout Function
     places(
-      cityNameSearch: String
-    ): [Place!]!  @authentication
+      cityNameSearch: String!
+    ): [Place!]!
   }
 
   type Mutation {
-    register(   
+    registerUser(   
       userDetails: UserRegisterInput
     ): User! 
     updateUser(   
@@ -60,8 +61,8 @@ export default gql`
     startLocation: Place!
     endLocation: Place!
     startDate: DateTime!
-    destinations: [Place]!
-    flights: [Flight]!
+    destinations: [Place!]!
+    flights: [Flight!]!
     currency: Currency!
     price: PositiveInt!
   }
@@ -104,14 +105,6 @@ export default gql`
     phoneNumber: PhoneNumber
   }
 
-  input UserIdInput {
-    _id: String!
-  }
-  
-  input placeIdInput {
-    airportId: String!
-  }
-
   input TripCreateInput {
     creator: String!
     booked: Boolean!
@@ -145,15 +138,5 @@ export default gql`
     airline: String!
     currency: Currency!
     price: PositiveInt!
-  }
-
-  input PlaceInput {
-    airportId: String!
-    airportName: String!
-    location: String!
-    cityId: String!
-    cityName: String!
-    countryId: String!
-    countryName: String!
   }
 `
