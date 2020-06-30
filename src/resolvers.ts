@@ -1,3 +1,4 @@
+// Resolvers
 import {
   DateTimeResolver,
   EmailAddressResolver,
@@ -5,68 +6,74 @@ import {
   CurrencyResolver,
   PositiveIntResolver,
 } from 'graphql-scalars';
+
+// DB Models
 import User, { IUser } from './models/user.model';
 import Trip, { ITrip } from './models/trip.model';
 import Place, { IPlace } from './models/place.model';
 import Flight, { IFlight } from './models/flight.model';
 
+// Auth
 import jwt from 'jsonwebtoken';
-const SECRETKEY = process.env.SECRETKEY || 'not safe use env';
+import bcrypt from 'bcrypt';
+import { environment } from './environment';
 
+// TS Types
+import { QueryLoginArgs, MutationRegisterUserArgs } from './types';
 
-interface LoginUserBody {
-  email: IUser['email'];
-  password: IUser['password'];
-}
-interface RegisterUserBody {
-  userDetails: {
-    email: IUser['email'];
-    password: IUser['password'];
-    firstName: IUser['firstName'];
-    lastName: IUser['lastName'];
-    phoneNumber?: IUser['phoneNumber'];
-  };
-}
-interface UpdateUserInputBody {
-  userDetails: {
-    email: IUser['email'];
-    password?: IUser['password'];
-    firstName?: IUser['firstName'];
-    lastName?: IUser['lastName'];
-    phoneNumber?: IUser['phoneNumber'];
-  };
-}
-interface TripInputBody {
-  tripInput: {
-    creator: ITrip['creator'];
-    booked: ITrip['booked'];
-    startLocation: ITrip['startLocation'];
-    endLocation: ITrip['endLocation'];
-    startDate: ITrip['startDate'];
-    destinations: ITrip['destinations'];
-    flights: ITrip['flights'];
-    currency: ITrip['currency'];
-    price: ITrip['price'];
-  };
-}
-interface TripUpdateBody {
-  tripInput: {
-    _id: string;
-    creator: ITrip['creator'];
-    booked?: ITrip['booked'];
-    startLocation?: ITrip['startLocation'];
-    endLocation?: ITrip['endLocation'];
-    startDate?: ITrip['startDate'];
-    destinations?: ITrip['destinations'];
-    flights?: ITrip['flights'];
-    currency?: ITrip['currency'];
-    price?: ITrip['price'];
-  };
-}
+// interface LoginUserBody {
+//   email: IUser['email'];
+//   password: IUser['password'];
+// }
+// interface RegisterUserBody {
+//   userDetails: {
+//     email: IUser['email'];
+//     password: IUser['password'];
+//     firstName: IUser['firstName'];
+//     lastName: IUser['lastName'];
+//     phoneNumber?: IUser['phoneNumber'];
+//   };
+// }
+// interface UpdateUserInputBody {
+//   userDetails: {
+//     email: IUser['email'];
+//     password?: IUser['password'];
+//     firstName?: IUser['firstName'];
+//     lastName?: IUser['lastName'];
+//     phoneNumber?: IUser['phoneNumber'];
+//   };
+// }
+// interface TripInputBody {
+//   tripInput: {
+//     creator: ITrip['creator'];
+//     booked: ITrip['booked'];
+//     startLocation: ITrip['startLocation'];
+//     endLocation: ITrip['endLocation'];
+//     startDate: ITrip['startDate'];
+//     destinations: ITrip['destinations'];
+//     flights: ITrip['flights'];
+//     currency: ITrip['currency'];
+//     price: ITrip['price'];
+//   };
+// }
+// interface TripUpdateBody {
+//   tripInput: {
+//     _id: string;
+//     creator: ITrip['creator'];
+//     booked?: ITrip['booked'];
+//     startLocation?: ITrip['startLocation'];
+//     endLocation?: ITrip['endLocation'];
+//     startDate?: ITrip['startDate'];
+//     destinations?: ITrip['destinations'];
+//     flights?: ITrip['flights'];
+//     currency?: ITrip['currency'];
+//     price?: ITrip['price'];
+//   };
+// }
 
 export const resolvers = {
   Query: {
-    async login(_: any, { email, password }: LoginUserBody) {
+    async login(_: any, { email, password }: QueryLoginArgs) {
       const user = await User.findOne({ email }).populate({
         path: 'trips',
         model: Trip,
@@ -87,14 +94,18 @@ export const resolvers = {
       });
       if (!user) return 'no user';
       if (user.password !== password) return 'no user'; //TODO: bcrypt
-      user.token = jwt.sign({_id: user._id}, SECRETKEY);
+      user.token = jwt.sign({ _id: user._id }, environment.secret);
       return user;
     },
   },
   Mutation: {
-    async registerUser(_: any, { userDetails }: RegisterUserBody) {
+    async registerUser(_: any, { userDetails }: MutationRegisterUserArgs) {
+      userDetails.password = await bcrypt.hash(
+        userDetails.password,
+        environment.saltRound
+      );
       const user = await User.create(userDetails);
-      user.token = jwt.sign({_id: user._id}, SECRETKEY);
+      user.token = jwt.sign({ _id: user._id }, environment.secret);
       return user;
     },
     async updateUser(_: any, { userDetails }: UpdateUserInputBody) {
@@ -164,7 +175,7 @@ export const resolvers = {
         },
       ]);
     },
-    async deleteTrip(_: any, { tripid }: any) { 
+    async deleteTrip(_: any, { tripid }: any) {
       const trip = await Trip.findById(tripid);
       if (!trip) throw new Error('trip not found');
       const user = await User.findById(trip.creator);

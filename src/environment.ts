@@ -14,6 +14,8 @@ interface Environment {
       useUnifiedTopology: boolean;
     };
   };
+  secret: string;
+  saltRound: number;
   port: number | string;
 }
 
@@ -31,5 +33,7 @@ export const environment: Environment = {
       useUnifiedTopology: true,
     },
   },
+  secret: process.env.SECRETKEY || 'No saved secret!',
+  saltRound: parseInt(process.env.SALTROUND || '10'),
   port: process.env.PORT || defaultPort,
 };

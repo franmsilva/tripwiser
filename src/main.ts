@@ -23,17 +23,16 @@ const server = new ApolloServer({
   context({ req }) {
     const token = req.headers.authorization
     const user = getUserFromToken(token)
-    console.log(user);
     return { user }
   },
-  // mocks: {
-  //   DateTime: DateTimeMock,
-  //   EmailAddress: EmailAddressMock,
-  //   PhoneNumber: PhoneNumberMock,
-  //   Currency: CurrencyMock,
-  //   PositiveInt: PositiveIntMock,
-  // }, // TODO: Remove in PROD.
-  // mockEntireSchema: false, // TODO: Remove in PROD.
+  mocks: {
+    DateTime: DateTimeMock,
+    EmailAddress: EmailAddressMock,
+    PhoneNumber: PhoneNumberMock,
+    Currency: CurrencyMock,
+    PositiveInt: PositiveIntMock,
+  }, // TODO: Remove in PROD.
+  mockEntireSchema: false, // TODO: Remove in PROD.
   introspection: environment.apollo.introspection,
   playground: environment.apollo.playground,
 });
