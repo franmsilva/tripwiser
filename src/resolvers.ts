@@ -121,6 +121,7 @@ export const resolvers = {
     async updateTrip(_: any, { tripInput }: TripUpdateBody) {
       //get the tip from db
       const trip = await Trip.findById(tripInput._id);
+      if (!trip) throw new Error('trip not found');
       await Flight.deleteMany({
         _id: {
           $in: trip.flights,
@@ -142,13 +143,17 @@ export const resolvers = {
         new: true,
       });
     },
-    async deleteTrip(_: never, id: string) {
+    async deleteTrip(_: any, id: string) {
       const trip = await Trip.findByIdAndDelete(id);
+      if (!trip) throw new Error('trip not found');
       const user = await User.findById(trip.creator);
+      if (!user) throw new Error('trip has no user smth went really wrong!');
       //async != filter
-      for (let i = 0; i < user.trips.length; i++) {
-        if (user.trips[i] === id) {
-          user.trips.splice(i, 1);
+      if (user.trips && user.trips.length>0) {
+        for (let i = 0; i < user.trips.length; i++) {
+          if (user.trips[i] === id) {
+            user.trips.splice(i, 1);
+          }
         }
       }
       await User.findByIdAndUpdate(user.id, user);
@@ -157,7 +162,6 @@ export const resolvers = {
           $in: trip.flights,
         },
       });
-      //await Trip.findByIdAndDelete(id);
     },
   },
 

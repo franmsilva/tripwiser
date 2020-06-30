@@ -32,6 +32,9 @@ export default gql`
     updateTrip(
       tripInput: TripUpdateInput
     ): Trip!
+    deleteTrip(
+      tripid: ID!
+    ): Trip!
   }
 
   type User {
