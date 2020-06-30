@@ -119,14 +119,45 @@ export const resolvers = {
       return trip;
     },
     async updateTrip(_: any, { tripInput }: TripUpdateBody) {
-      // TODO: Handle the addition of new flights/destinations
-      // TODO: Only pass in flightId not complete flight object
-      const trip = await Trip.findOneAndUpdate(
-        { _id: tripInput._id },
-        tripInput,
-        { new: true }
-      ).exec();
-      return trip;
+      //get the tip from db
+      const trip = await Trip.findById(tripInput._id);
+      await Flight.deleteMany({
+        _id: {
+          $in: trip.flights,
+        },
+      });
+      //create updated trip
+      const updatetrip = {
+        ...trip,
+        ...tripInput,
+      };
+      //fill new flights
+      const { flights } = tripInput;
+      for (let i = 0; i < flights.length; i++) {
+        const flightDB = await Flight.create(flights[i]);
+        tripInput.flights.push(flightDB._id);
+      }
+      //update in db
+      return await Trip.findOneAndUpdate({ _id: tripInput._id }, updatetrip, {
+        new: true,
+      });
+    },
+    async deleteTrip(_: never, id: string) {
+      const trip = await Trip.findByIdAndDelete(id);
+      const user = await User.findById(trip.creator);
+      //async != filter
+      for (let i = 0; i < user.trips.length; i++) {
+        if (user.trips[i] === id) {
+          user.trips.splice(i, 1);
+        }
+      }
+      await User.findByIdAndUpdate(user.id, user);
+      await Flight.deleteMany({
+        _id: {
+          $in: trip.flights,
+        },
+      });
+      //await Trip.findByIdAndDelete(id);
     },
   },
 
