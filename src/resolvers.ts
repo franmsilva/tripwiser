@@ -15,11 +15,13 @@ interface LoginUserBody {
   password: IUser['password'];
 }
 interface RegisterUserBody {
-  email: IUser['email'];
-  password: IUser['password'];
-  firstName: IUser['firstName'];
-  lastName: IUser['lastName'];
-  phoneNumber?: IUser['phoneNumber'];
+  userDetails: {
+    email: IUser['email'];
+    password: IUser['password'];
+    firstName: IUser['firstName'];
+    lastName: IUser['lastName'];
+    phoneNumber?: IUser['phoneNumber'];
+  }
 }
 interface UpdateUserInputBody {
   userDetails: {
@@ -85,8 +87,8 @@ export const resolvers = {
     },
   },
   Mutation: {
-    async register(_: any, args: RegisterUserBody) {
-      const user = await User.create(args);
+    async register(_: any, { userDetails }: RegisterUserBody) {
+      const user = await User.create(userDetails);
       return user;
     },
     async updateUser(_: any, { userDetails }: UpdateUserInputBody) {
