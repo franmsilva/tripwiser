@@ -6,6 +6,8 @@ export default gql`
     mutation: Mutation
   }
 
+  directive @authentication on FIELD_DEFINITION
+
   scalar DateTime
   scalar EmailAddress 
   scalar PhoneNumber
@@ -17,24 +19,27 @@ export default gql`
       email: EmailAddress!
       password: String!
     ): User!
+    places(
+      cityNameSearch: String
+    ): [Place!]!  @authentication
   }
 
   type Mutation {
-    register(
+    register(   
       userDetails: UserRegisterInput
-    ): User!
-    updateUser(
+    ): User! 
+    updateUser(   
       userDetails: UserUpdateInput
-    ): User!
+    ): User! @authentication
     createTrip(
       tripInput: TripCreateInput
-    ): Trip!
+    ): Trip! @authentication
     updateTrip(
       tripInput: TripUpdateInput
-    ): Trip!
+    ): Trip! @authentication
     deleteTrip(
       tripid: String!
-    ): Boolean!
+    ): Boolean! @authentication
   }
 
   type User {
@@ -45,6 +50,7 @@ export default gql`
     lastName: String!
     phoneNumber: PhoneNumber
     trips: [Trip]!
+    token: String
   }
 
   type Trip {

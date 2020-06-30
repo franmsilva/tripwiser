@@ -8,6 +8,7 @@ export interface IUser extends Document {
   lastName: string;
   phoneNumber?: string;
   trips?: ITrip['_id'][];
+  token?: string;
 }
 
 const UserSchema: Schema = new Schema(

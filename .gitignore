@@ -12,3 +12,5 @@
 # webpack hotupdate
 *.hot-update.json
 *.hot-update.js
+
+server.js

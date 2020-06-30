@@ -10,6 +10,10 @@ import Trip, { ITrip } from './models/trip.model';
 import Place, { IPlace } from './models/place.model';
 import Flight, { IFlight } from './models/flight.model';
 
+import jwt from 'jsonwebtoken';
+const SECRETKEY = process.env.SECRETKEY || 'not safe use env';
+
+
 interface LoginUserBody {
   email: IUser['email'];
   password: IUser['password'];
@@ -83,12 +87,14 @@ export const resolvers = {
       });
       if (!user) return 'no user';
       if (user.password !== password) return 'no user'; //TODO: bcrypt
+      user.token = jwt.sign({_id: user._id}, SECRETKEY);
       return user;
     },
   },
   Mutation: {
     async register(_: any, { userDetails }: RegisterUserBody) {
       const user = await User.create(userDetails);
+      user.token = jwt.sign({_id: user._id}, SECRETKEY);
       return user;
     },
     async updateUser(_: any, { userDetails }: UpdateUserInputBody) {
