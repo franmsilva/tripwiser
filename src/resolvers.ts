@@ -19,7 +19,7 @@ import bcrypt from 'bcrypt';
 import { environment } from './environment';
 
 // TS Types
-import { QueryLoginArgs, MutationRegisterUserArgs } from './types';
+import { QueryLoginArgs, MutationRegisterUserArgs, MutationUpdateUserArgs, MutationCreateTripArgs, MutationUpdateTripArgs, FlightInput} from './types';
 
 // interface LoginUserBody {
 //   email: IUser['email'];
@@ -92,8 +92,9 @@ export const resolvers = {
           },
         ],
       });
-      if (!user) return 'no user';
-      if (user.password !== password) return 'no user'; //TODO: bcrypt
+      if (!user) return 'Wrong Username and/or Password'; 
+      const match = await bcrypt.compare(password, user.password)
+      if (!match) return 'Wrong Username and/or Password';
       user.token = jwt.sign({ _id: user._id }, environment.secret);
       return user;
     },
@@ -108,7 +109,7 @@ export const resolvers = {
       user.token = jwt.sign({ _id: user._id }, environment.secret);
       return user;
     },
-    async updateUser(_: any, { userDetails }: UpdateUserInputBody) {
+    async updateUser(_: any, { userDetails }: MutationUpdateUserArgs) {
       const user = await User.findOneAndUpdate(
         { email: userDetails.email },
         userDetails,
@@ -116,13 +117,13 @@ export const resolvers = {
       ).exec();
       return user;
     },
-    async createTrip(_: any, { tripInput }: TripInputBody) {
+    async createTrip(_: any, { tripInput }: MutationCreateTripArgs) {
       const flights = [...tripInput.flights];
       tripInput.flights = [];
 
-      for (let i = 0; i < flights.length; i++) {
+      for (const flight of flights) {
         // Create DB Instance of Flight
-        const flightDB = await Flight.create(flights[i]);
+        const flightDB = await Flight.create(flight);
         tripInput.flights.push(flightDB._id);
       }
 
@@ -137,7 +138,7 @@ export const resolvers = {
 
       return trip;
     },
-    async updateTrip(_: any, { tripInput }: TripUpdateBody) {
+    async updateTrip(_: any, { tripInput }: MutationUpdateTripArgs) {
       //get the trip from db
       const trip = await Trip.findById(tripInput._id);
       if (!trip) throw new Error('trip not found');

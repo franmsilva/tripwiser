@@ -4,8 +4,8 @@ import { IPlace } from './place.model';
 export interface IFlight extends Document {
   origin: IPlace['_id'];
   destination: IPlace['_id'];
-  depatureDate: string;
-  arrivalDate: string;
+  departureDate: Date;
+  arrivalDate: Date;
   airline: string;
   currency: string;
   price: number;
