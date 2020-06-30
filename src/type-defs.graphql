@@ -33,8 +33,8 @@ export default gql`
       tripInput: TripUpdateInput
     ): Trip!
     deleteTrip(
-      tripid: ID!
-    ): Trip!
+      tripid: String!
+    ): Boolean!
   }
 
   type User {
@@ -120,12 +120,12 @@ export default gql`
 
   input TripUpdateInput {
     _id: ID!
-    creator: UserIdInput!
+    creator: String!
     booked: Boolean
-    startLocation: placeIdInput
-    endLocation: placeIdInput
+    startLocation: String
+    endLocation: String
     startDate: DateTime
-    destinations: [placeIdInput!]
+    destinations: [String!]
     flights: [FlightInput!]
     currency: Currency
     price: PositiveInt

@@ -21,7 +21,7 @@ interface RegisterUserBody {
     firstName: IUser['firstName'];
     lastName: IUser['lastName'];
     phoneNumber?: IUser['phoneNumber'];
-  }
+  };
 }
 interface UpdateUserInputBody {
   userDetails: {
@@ -121,7 +121,7 @@ export const resolvers = {
       return trip;
     },
     async updateTrip(_: any, { tripInput }: TripUpdateBody) {
-      //get the tip from db
+      //get the trip from db
       const trip = await Trip.findById(tripInput._id);
       if (!trip) throw new Error('trip not found');
       await Flight.deleteMany({
@@ -129,31 +129,42 @@ export const resolvers = {
           $in: trip.flights,
         },
       });
-      //create updated trip
-      const updatetrip = {
-        ...trip,
-        ...tripInput,
-      };
       //fill new flights
       const { flights } = tripInput;
+      tripInput.flights = [];
       for (let i = 0; i < flights.length; i++) {
         const flightDB = await Flight.create(flights[i]);
         tripInput.flights.push(flightDB._id);
       }
+      //create updated trip
+      const updateTrip = Object.assign(trip, tripInput);
       //update in db
-      return await Trip.findOneAndUpdate({ _id: tripInput._id }, updatetrip, {
+      return await Trip.findOneAndUpdate({ _id: tripInput._id }, updateTrip, {
         new: true,
-      });
+      }).populate([
+        {
+          path: 'startLocation endLocation destinations',
+          model: Place,
+        },
+        {
+          path: 'flights',
+          model: Flight,
+          populate: {
+            path: 'origin destination',
+            model: Place,
+          },
+        },
+      ]);
     },
-    async deleteTrip(_: any, id: string) {
-      const trip = await Trip.findByIdAndDelete(id);
+    async deleteTrip(_: any, { tripid }: any) { 
+      const trip = await Trip.findById(tripid);
       if (!trip) throw new Error('trip not found');
       const user = await User.findById(trip.creator);
       if (!user) throw new Error('trip has no user smth went really wrong!');
       //async != filter
-      if (user.trips && user.trips.length>0) {
+      if (user.trips && user.trips.length > 0) {
         for (let i = 0; i < user.trips.length; i++) {
-          if (user.trips[i] === id) {
+          if (user.trips[i] === tripid) {
             user.trips.splice(i, 1);
           }
         }
@@ -164,6 +175,8 @@ export const resolvers = {
           $in: trip.flights,
         },
       });
+      await Trip.findByIdAndDelete(tripid);
+      return true;
     },
   },
 
