@@ -7,7 +7,8 @@
     "build": "webpack --config webpack.$NODE_ENV.js",
     "start": "node dist/server",
     "start:env": "node --require dotenv/config dist/server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "graphql-codegen --config codegen.yml"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,10 @@
   },
   "homepage": "https://github.com/fmsilva1996/tripwiser#readme",
   "devDependencies": {
+    "@graphql-codegen/cli": "1.16.0",
+    "@graphql-codegen/introspection": "^1.16.0",
+    "@graphql-codegen/typescript": "1.16.0",
+    "@graphql-codegen/typescript-resolvers": "^1.16.0",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/mongoose": "^5.7.28",
     "@types/webpack-env": "^1.15.2",

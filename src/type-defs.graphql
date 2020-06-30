@@ -19,7 +19,10 @@ export default gql`
       email: EmailAddress!
       password: String!
     ): User!
-    # TODO: Logout Function
+    logout(
+      email: EmailAddress!
+      password: String!
+    ): User!
     places(
       cityNameSearch: String!
     ): [Place!]!
