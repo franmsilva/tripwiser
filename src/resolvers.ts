@@ -7,6 +7,7 @@ import {
 } from 'graphql-scalars';
 import User, { IUser } from './models/user.model';
 import Trip, { ITrip } from './models/trip.model';
+import Place, { IPlace } from './models/place.model';
 import Flight, { IFlight } from './models/flight.model';
 
 interface LoginUserBody {
@@ -62,11 +63,22 @@ export const resolvers = {
     async login(_: any, { email, password }: LoginUserBody) {
       const user = await User.findOne({ email }).populate({
         path: 'trips',
-        populate: {
-          path: 'flights',
-        },
+        model: Trip,
+        populate: [
+          {
+            path: 'startLocation endLocation destinations',
+            model: Place,
+          },
+          {
+            path: 'flights',
+            model: Flight,
+            populate: {
+              path: 'origin destination',
+              model: Place,
+            },
+          },
+        ],
       });
-      console.log(user);
       if (!user) return 'no user';
       if (user.password !== password) return 'no user'; //TODO: bcrypt
       return user;
@@ -107,6 +119,8 @@ export const resolvers = {
       return trip;
     },
     async updateTrip(_: any, { tripInput }: TripUpdateBody) {
+      // TODO: Handle the addition of new flights/destinations
+      // TODO: Only pass in flightId not complete flight object
       const trip = await Trip.findOneAndUpdate(
         { _id: tripInput._id },
         tripInput,

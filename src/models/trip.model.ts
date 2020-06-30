@@ -28,11 +28,13 @@ const TripSchema: Schema = new Schema(
     startLocation: {
       type: Schema.Types.ObjectId,
       ref: 'Place',
+      required: true,
     },
 
     endLocation: {
       type: Schema.Types.ObjectId,
       ref: 'Place',
+      required: true,
     },
     startDate: {
       type: Date,
