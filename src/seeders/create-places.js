@@ -1,4 +1,4 @@
-const Place = require('../models/place.model.js');
+const Place = require('../models/place.model.ts');
 const skyPlaces = require('./places.json');
 
 const seedDB = (places) => {
