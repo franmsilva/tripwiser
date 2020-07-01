@@ -96,6 +96,22 @@ exports.resolvers = {
                 });
             });
         },
+        places: function (_, _a) {
+            var cityNameSearch = _a.cityNameSearch;
+            return __awaiter(this, void 0, void 0, function () {
+                var placeArr;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0: return [4, place_model_1.default.find({
+                                cityName: { $regex: cityNameSearch, $options: 'gi' },
+                            })];
+                        case 1:
+                            placeArr = _b.sent();
+                            return [2, placeArr];
+                    }
+                });
+            });
+        },
     },
     Mutation: {
         registerUser: function (_, _a) {

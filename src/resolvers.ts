@@ -26,6 +26,7 @@ import {
   MutationCreateTripArgs,
   MutationUpdateTripArgs,
   MutationDeleteTripArgs,
+  QueryPlacesArgs,
 } from './types';
 
 export const resolvers = {
@@ -54,6 +55,12 @@ export const resolvers = {
       if (!match) return 'Wrong Username and/or Password';
       user.token = jwt.sign({ _id: user._id }, environment.secret);
       return user;
+    },
+    async places(_: any, { cityNameSearch }: QueryPlacesArgs) {
+      const placeArr = await Place.find({
+        cityName: { $regex: cityNameSearch, $options: 'gi' },
+      });
+      return placeArr;
     },
   },
   Mutation: {

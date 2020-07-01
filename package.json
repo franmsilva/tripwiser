@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "generate": "graphql-codegen --config codegen.yml",
-    "start": "npx nodemon -r dotenv/config ./dist/main.js ",
+    "start": "npx nodemon -r dotenv/config ./dist/index.js ",
     "seed": "npx nodemon -r dotenv/config ./dist/seeders/create-places.js"
   },
   "repository": {
