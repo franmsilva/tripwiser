@@ -8,10 +8,10 @@ import {
 } from 'graphql-scalars';
 
 // DB Models
-import User, { IUser } from './models/user.model';
-import Trip, { ITrip } from './models/trip.model';
-import Place, { IPlace } from './models/place.model';
-import Flight, { IFlight } from './models/flight.model';
+import User from './models/user.model';
+import Trip from './models/trip.model';
+import Place from './models/place.model';
+import Flight from './models/flight.model';
 
 // Auth
 import jwt from 'jsonwebtoken';
@@ -19,57 +19,14 @@ import bcrypt from 'bcrypt';
 import { environment } from './environment';
 
 // TS Types
-import { QueryLoginArgs, MutationRegisterUserArgs, MutationUpdateUserArgs, MutationCreateTripArgs, MutationUpdateTripArgs, FlightInput} from './types';
-
-// interface LoginUserBody {
-//   email: IUser['email'];
-//   password: IUser['password'];
-// }
-// interface RegisterUserBody {
-//   userDetails: {
-//     email: IUser['email'];
-//     password: IUser['password'];
-//     firstName: IUser['firstName'];
-//     lastName: IUser['lastName'];
-//     phoneNumber?: IUser['phoneNumber'];
-//   };
-// }
-// interface UpdateUserInputBody {
-//   userDetails: {
-//     email: IUser['email'];
-//     password?: IUser['password'];
-//     firstName?: IUser['firstName'];
-//     lastName?: IUser['lastName'];
-//     phoneNumber?: IUser['phoneNumber'];
-//   };
-// }
-// interface TripInputBody {
-//   tripInput: {
-//     creator: ITrip['creator'];
-//     booked: ITrip['booked'];
-//     startLocation: ITrip['startLocation'];
-//     endLocation: ITrip['endLocation'];
-//     startDate: ITrip['startDate'];
-//     destinations: ITrip['destinations'];
-//     flights: ITrip['flights'];
-//     currency: ITrip['currency'];
-//     price: ITrip['price'];
-//   };
-// }
-// interface TripUpdateBody {
-//   tripInput: {
-//     _id: string;
-//     creator: ITrip['creator'];
-//     booked?: ITrip['booked'];
-//     startLocation?: ITrip['startLocation'];
-//     endLocation?: ITrip['endLocation'];
-//     startDate?: ITrip['startDate'];
-//     destinations?: ITrip['destinations'];
-//     flights?: ITrip['flights'];
-//     currency?: ITrip['currency'];
-//     price?: ITrip['price'];
-//   };
-// }
+import {
+  QueryLoginArgs,
+  MutationRegisterUserArgs,
+  MutationUpdateUserArgs,
+  MutationCreateTripArgs,
+  MutationUpdateTripArgs,
+  MutationDeleteTripArgs,
+} from './types';
 
 export const resolvers = {
   Query: {
@@ -92,8 +49,8 @@ export const resolvers = {
           },
         ],
       });
-      if (!user) return 'Wrong Username and/or Password'; 
-      const match = await bcrypt.compare(password, user.password)
+      if (!user) return 'Wrong Username and/or Password';
+      const match = await bcrypt.compare(password, user.password);
       if (!match) return 'Wrong Username and/or Password';
       user.token = jwt.sign({ _id: user._id }, environment.secret);
       return user;
@@ -101,6 +58,7 @@ export const resolvers = {
   },
   Mutation: {
     async registerUser(_: any, { userDetails }: MutationRegisterUserArgs) {
+      if (!userDetails) throw Error('No user details provided!');
       userDetails.password = await bcrypt.hash(
         userDetails.password,
         environment.saltRound
@@ -109,15 +67,27 @@ export const resolvers = {
       user.token = jwt.sign({ _id: user._id }, environment.secret);
       return user;
     },
-    async updateUser(_: any, { userDetails }: MutationUpdateUserArgs) {
-      const user = await User.findOneAndUpdate(
+    async updateUser(_: any, userDetails: MutationUpdateUserArgs) {
+      // if (!userDetails) throw Error('No user details provided!');
+      // for (const propName in userDetails) {
+      //   if (!userDetails[propName]) delete userDetails[propName];
+      // }
+      const outdatedUserDetails = await User.findOne({
+        email: userDetails.email,
+      });
+      const updatedUserDetails = Object.assign(
+        outdatedUserDetails,
+        userDetails
+      );
+      const updatedUser = await User.findOneAndUpdate(
         { email: userDetails.email },
-        userDetails,
+        updatedUserDetails,
         { new: true }
       ).exec();
-      return user;
+      return updatedUser;
     },
     async createTrip(_: any, { tripInput }: MutationCreateTripArgs) {
+      if (!tripInput) throw Error('No trip details provided!');
       const flights = [...tripInput.flights];
       tripInput.flights = [];
 
@@ -139,7 +109,7 @@ export const resolvers = {
       return trip;
     },
     async updateTrip(_: any, { tripInput }: MutationUpdateTripArgs) {
-      //get the trip from db
+      if (!tripInput) throw Error('No trip details provided!');
       const trip = await Trip.findById(tripInput._id);
       if (!trip) throw new Error('trip not found');
       await Flight.deleteMany({
@@ -176,15 +146,16 @@ export const resolvers = {
         },
       ]);
     },
-    async deleteTrip(_: any, { tripid }: any) {
-      const trip = await Trip.findById(tripid);
+    async deleteTrip(_: any, { tripId }: MutationDeleteTripArgs) {
+      if (!tripId) throw Error('No trip ID provided!');
+      const trip = await Trip.findById(tripId);
       if (!trip) throw new Error('trip not found');
       const user = await User.findById(trip.creator);
       if (!user) throw new Error('trip has no user smth went really wrong!');
       //async != filter
       if (user.trips && user.trips.length > 0) {
         for (let i = 0; i < user.trips.length; i++) {
-          if (user.trips[i] === tripid) {
+          if (user.trips[i] === tripId) {
             user.trips.splice(i, 1);
           }
         }
@@ -195,7 +166,7 @@ export const resolvers = {
           $in: trip.flights,
         },
       });
-      await Trip.findByIdAndDelete(tripid);
+      await Trip.findByIdAndDelete(tripId);
       return true;
     },
   },

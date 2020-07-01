@@ -246,11 +246,55 @@
             "description": null,
             "args": [
               {
-                "name": "userDetails",
+                "name": "email",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "UserUpdateInput",
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "EmailAddress",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "password",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "firstName",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "lastName",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "phoneNumber",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "PhoneNumber",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -327,7 +371,7 @@
             "description": null,
             "args": [
               {
-                "name": "tripid",
+                "name": "tripId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
