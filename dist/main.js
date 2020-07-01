@@ -9,11 +9,10 @@ var auth_1 = require("./auth");
 var directives_1 = require("./directives");
 var environment_1 = require("./environment");
 var resolvers_1 = require("./resolvers");
-var type_defs_graphql_1 = __importDefault(require("./type-defs.graphql"));
-require('./connect');
+var type_defs_1 = __importDefault(require("./type-defs"));
 var server = new apollo_server_1.ApolloServer({
     resolvers: resolvers_1.resolvers,
-    typeDefs: type_defs_graphql_1.default,
+    typeDefs: type_defs_1.default,
     schemaDirectives: {
         authentication: directives_1.Authentication,
     },

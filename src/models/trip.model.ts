@@ -1,7 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from '../connect';
+import { Document } from 'mongoose';
 import { IUser } from './user.model';
 import { IFlight } from './flight.model';
 import { IPlace } from './place.model';
+
+const Schema = mongoose.Schema;
 
 export interface ITrip extends Document {
   creator: string; // User ID as Reference
@@ -15,7 +18,7 @@ export interface ITrip extends Document {
   price: number;
 }
 
-const TripSchema: Schema = new Schema(
+const TripSchema = new Schema(
   {
     creator: {
       type: String,

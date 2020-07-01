@@ -1,4 +1,7 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from '../connect';
+import { Document } from 'mongoose';
+
+const Schema = mongoose.Schema;
 
 export interface IPlace extends Document {
   airportId: string;
@@ -9,10 +12,11 @@ export interface IPlace extends Document {
   countryId: string;
   countryName: string;
 }
-const PlaceSchema: Schema = new Schema(
+const PlaceSchema = new Schema(
   {
     airportId: {
       type: String,
+      unique: true,
     },
     airportName: {
       type: String,
@@ -36,4 +40,4 @@ const PlaceSchema: Schema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model<IPlace>('Place', PlaceSchema);
+export default mongoose.model<IPlace>('places', PlaceSchema);

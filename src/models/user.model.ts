@@ -1,5 +1,8 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from '../connect';
+import { Document } from 'mongoose';
 import { ITrip } from './trip.model';
+
+const Schema = mongoose.Schema;
 
 export interface IUser extends Document {
   email: string;
@@ -11,7 +14,7 @@ export interface IUser extends Document {
   token?: string;
 }
 
-const UserSchema: Schema = new Schema(
+const UserSchema = new Schema(
   {
     email: {
       type: String,

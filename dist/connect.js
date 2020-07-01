@@ -13,4 +13,4 @@ db.once('open', function () {
 db.on('error', function () {
     console.error('MongoDB Atlas connection error!');
 });
-module.exports = db;
+exports.default = mongoose_1.default;

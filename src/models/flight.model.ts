@@ -1,5 +1,8 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from '../connect';
+import { Document } from 'mongoose';
 import { IPlace } from './place.model';
+
+const Schema = mongoose.Schema;
 
 export interface IFlight extends Document {
   origin: IPlace['_id'];
@@ -11,7 +14,7 @@ export interface IFlight extends Document {
   price: number;
 }
 
-const FlightSchema: Schema = new Schema(
+const FlightSchema = new Schema(
   {
     origin: {
       type: Schema.Types.ObjectId,

@@ -11,8 +11,7 @@ import { getUserFromToken } from './auth';
 import { Authentication } from './directives';
 import { environment } from './environment';
 import { resolvers } from './resolvers';
-import typeDefs from './type-defs.graphql';
-require('./connect');
+import typeDefs from './type-defs';
 
 const server = new ApolloServer({
   resolvers,
