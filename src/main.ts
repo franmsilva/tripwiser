@@ -21,9 +21,9 @@ const server = new ApolloServer({
     authentication: Authentication,
   },
   context({ req }) {
-    const token = req.headers.authorization
-    const user = getUserFromToken(token)
-    return { user }
+    const token = req.headers.authorization;
+    const user = getUserFromToken(token);
+    return { user };
   },
   mocks: {
     DateTime: DateTimeMock,
@@ -40,9 +40,3 @@ const server = new ApolloServer({
 server
   .listen(environment.port)
   .then(({ url }) => console.log(`Server ready at ${url}.`));
-
-// Hot Module Replacement
-if (module.hot) {
-  module.hot.accept();
-  module.hot.dispose(() => console.log('Module disposed. '));
-}
