@@ -19,19 +19,19 @@ const server = new ApolloServer({
   schemaDirectives: {
     authentication: Authentication,
   },
-  context({ req }) {
+  async context({ req }) {
     const token = req.headers.authorization;
-    const user = getUserFromToken(token);
+    const user = await getUserFromToken(token);
     return { user };
   },
-  mocks: {
-    DateTime: DateTimeMock,
-    EmailAddress: EmailAddressMock,
-    PhoneNumber: PhoneNumberMock,
-    Currency: CurrencyMock,
-    PositiveInt: PositiveIntMock,
-  }, // TODO: Remove in PROD.
-  mockEntireSchema: false, // TODO: Remove in PROD.
+  // mocks: {
+  //   DateTime: DateTimeMock,
+  //   EmailAddress: EmailAddressMock,
+  //   PhoneNumber: PhoneNumberMock,
+  //   Currency: CurrencyMock,
+  //   PositiveInt: PositiveIntMock,
+  // }, // TODO: Remove in PROD.
+  // mockEntireSchema: false, // TODO: Remove in PROD.
   introspection: environment.apollo.introspection,
   playground: environment.apollo.playground,
 });

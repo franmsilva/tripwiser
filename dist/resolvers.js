@@ -136,20 +136,23 @@ exports.resolvers = {
                 });
             });
         },
-        updateUser: function (_, userDetails) {
+        updateUser: function (_, userDetails, ctx) {
             return __awaiter(this, void 0, void 0, function () {
-                var outdatedUserDetails, updatedUserDetails, updatedUser;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4, user_model_1.default.findOne({
-                                email: userDetails.email,
-                            })];
+                var _a, updatedUserDetails, updatedUser;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            if (!userDetails.password) return [3, 2];
+                            _a = userDetails;
+                            return [4, bcrypt_1.default.hash(userDetails.password, environment_1.environment.saltRound)];
                         case 1:
-                            outdatedUserDetails = _a.sent();
-                            updatedUserDetails = Object.assign(outdatedUserDetails, userDetails);
-                            return [4, user_model_1.default.findOneAndUpdate({ email: userDetails.email }, updatedUserDetails, { new: true }).exec()];
+                            _a.password = _b.sent();
+                            _b.label = 2;
                         case 2:
-                            updatedUser = _a.sent();
+                            updatedUserDetails = Object.assign(ctx.user, userDetails);
+                            return [4, user_model_1.default.findOneAndUpdate({ _id: ctx.user._id }, updatedUserDetails, { new: true }).exec()];
+                        case 3:
+                            updatedUser = _b.sent();
                             return [2, updatedUser];
                     }
                 });

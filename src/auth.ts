@@ -4,13 +4,12 @@ import User, { IUser } from './models/user.model';
 const SECRETKEY = process.env.SECRETKEY || 'not safe use env';
 
 export const getUserFromToken = (token: string | undefined) => {
-  try { 
+  try {
     if (!token) return null;
     const payload: any = jwt.verify(token, SECRETKEY);
-    return User.findById(payload._id);
+    const user = User.findById(payload._id);
+    return user;
   } catch (error) {
-    return null
+    return null;
   }
-}; 
-
-
+};
