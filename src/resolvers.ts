@@ -29,6 +29,23 @@ import {
   QueryPlacesArgs,
 } from './types';
 
+function matchSearch (place: string, searchValue: string) {
+  console.log(place)
+  place = place.toLowerCase();
+  searchValue = searchValue.toLowerCase();
+  const itemChar = place.charAt(searchValue.length - 1);
+  const searchChar = searchValue.charAt(searchValue.length - 1)
+  if (itemChar === searchChar) {
+    return place.includes(searchValue);
+  }
+}
+
+function filterOptions (searchValue: string, options: any) {
+  return options.filter((place: any) => {
+    return matchSearch(place.cityName, searchValue);
+  })
+}
+
 export const resolvers = {
   Query: {
     async login(_: any, { email, password }: QueryLoginArgs) {
@@ -60,7 +77,9 @@ export const resolvers = {
       const placeArr = await Place.find({
         cityName: { $regex: cityNameSearch, $options: 'gi' },
       });
-      return placeArr;
+
+      return filterOptions(cityNameSearch, placeArr);
+
     },
   },
   Mutation: {
@@ -104,12 +123,30 @@ export const resolvers = {
       const trip = await Trip.create(tripInput);
 
       // Add Trip ID to Creator Model
-      await User.findOneAndUpdate(
+      const userDoc = await User.findOneAndUpdate(
         { _id: trip.creator },
-        { $push: { trips: trip._id } }
-      );
+        { $push: { trips: trip._id } },
+        { new: true}
+      ).populate({
+        path: 'trips',
+        model: Trip,
+        populate: [
+          {
+            path: 'startLocation endLocation destinations',
+            model: Place,
+          },
+          {
+            path: 'flights',
+            model: Flight,
+            populate: {
+              path: 'origin destination',
+              model: Place,
+            },
+          },
+        ],
+      });
 
-      return trip;
+      return userDoc;
     },
     async updateTrip(_: any, { tripInput }: MutationUpdateTripArgs) {
       if (!tripInput) throw Error('No trip details provided!');
