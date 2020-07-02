@@ -55,6 +55,21 @@ var flight_model_1 = __importDefault(require("./models/flight.model"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var environment_1 = require("./environment");
+function matchSearch(place, searchValue) {
+    console.log(place);
+    place = place.toLowerCase();
+    searchValue = searchValue.toLowerCase();
+    var itemChar = place.charAt(searchValue.length - 1);
+    var searchChar = searchValue.charAt(searchValue.length - 1);
+    if (itemChar === searchChar) {
+        return place.includes(searchValue);
+    }
+}
+function filterOptions(searchValue, options) {
+    return options.filter(function (place) {
+        return matchSearch(place.cityName, searchValue);
+    });
+}
 exports.resolvers = {
     Query: {
         login: function (_, _a) {
@@ -107,7 +122,7 @@ exports.resolvers = {
                             })];
                         case 1:
                             placeArr = _b.sent();
-                            return [2, placeArr];
+                            return [2, filterOptions(cityNameSearch, placeArr)];
                     }
                 });
             });
@@ -161,7 +176,7 @@ exports.resolvers = {
         createTrip: function (_, _a) {
             var tripInput = _a.tripInput;
             return __awaiter(this, void 0, void 0, function () {
-                var flights, _i, flights_1, flight, flightDB, trip;
+                var flights, _i, flights_1, flight, flightDB, trip, userDoc;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
@@ -185,10 +200,27 @@ exports.resolvers = {
                         case 4: return [4, trip_model_1.default.create(tripInput)];
                         case 5:
                             trip = _b.sent();
-                            return [4, user_model_1.default.findOneAndUpdate({ _id: trip.creator }, { $push: { trips: trip._id } })];
+                            return [4, user_model_1.default.findOneAndUpdate({ _id: trip.creator }, { $push: { trips: trip._id } }, { new: true }).populate({
+                                    path: 'trips',
+                                    model: trip_model_1.default,
+                                    populate: [
+                                        {
+                                            path: 'startLocation endLocation destinations',
+                                            model: place_model_1.default,
+                                        },
+                                        {
+                                            path: 'flights',
+                                            model: flight_model_1.default,
+                                            populate: {
+                                                path: 'origin destination',
+                                                model: place_model_1.default,
+                                            },
+                                        },
+                                    ],
+                                })];
                         case 6:
-                            _b.sent();
-                            return [2, trip];
+                            userDoc = _b.sent();
+                            return [2, userDoc];
                     }
                 });
             });
