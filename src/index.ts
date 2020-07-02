@@ -19,9 +19,9 @@ const server = new ApolloServer({
   schemaDirectives: {
     authentication: Authentication,
   },
-  context({ req }) {
+  async context({ req }) {
     const token = req.headers.authorization;
-    const user = getUserFromToken(token);
+    const user = await getUserFromToken(token);
     return { user };
   },
   // mocks: {

@@ -12,7 +12,8 @@ exports.getUserFromToken = function (token) {
         if (!token)
             return null;
         var payload = jsonwebtoken_1.default.verify(token, SECRETKEY);
-        return user_model_1.default.findById(payload._id);
+        var user = user_model_1.default.findById(payload._id);
+        return user;
     }
     catch (error) {
         return null;

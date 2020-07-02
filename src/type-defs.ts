@@ -9,45 +9,29 @@ export default gql`
   directive @authentication on FIELD_DEFINITION
 
   scalar DateTime
-  scalar EmailAddress 
+  scalar EmailAddress
   scalar PhoneNumber
   scalar Currency
   scalar PositiveInt
 
   type Query {
-    login(
-      email: EmailAddress!
-      password: String!
-    ): User!
-    logout(
-      email: EmailAddress!
-      password: String!
-    ): User!
-    places(
-      cityNameSearch: String!
-    ): [Place!]!
+    login(email: EmailAddress!, password: String!): User!
+    logout(email: EmailAddress!, password: String!): User!
+    places(cityNameSearch: String!): [Place!]!
   }
 
   type Mutation {
-    registerUser(   
-      userDetails: UserRegisterInput
-    ): User! 
-    updateUser(   
-      email: EmailAddress!
+    registerUser(userDetails: UserRegisterInput): User!
+    updateUser(
+      email: EmailAddress
       password: String
       firstName: String
       lastName: String
-      phoneNumber: PhoneNumber 
+      phoneNumber: PhoneNumber
     ): User! @authentication
-    createTrip(
-      tripInput: TripCreateInput
-    ): Trip! @authentication
-    updateTrip(
-      tripInput: TripUpdateInput
-    ): Trip! @authentication
-    deleteTrip(
-      tripId: String!
-    ): Boolean! @authentication
+    createTrip(tripInput: TripCreateInput): Trip! @authentication
+    updateTrip(tripInput: TripUpdateInput): Trip! @authentication
+    deleteTrip(tripId: String!): Boolean! @authentication
   }
 
   type User {
@@ -73,7 +57,7 @@ export default gql`
     currency: Currency!
     price: PositiveInt!
   }
-  
+
   type Flight {
     _id: ID!
     origin: Place!
@@ -85,7 +69,7 @@ export default gql`
     price: PositiveInt!
   }
 
-  type Place { 
+  type Place {
     _id: ID!
     airportId: String!
     airportName: String!
@@ -95,7 +79,7 @@ export default gql`
     countryId: String!
     countryName: String!
   }
-  
+
   input UserRegisterInput {
     email: EmailAddress!
     password: String!
@@ -105,11 +89,11 @@ export default gql`
   }
 
   input UserUpdateInput {
-    email: EmailAddress!
+    email: EmailAddress
     password: String
     firstName: String
     lastName: String
-    phoneNumber: PhoneNumber 
+    phoneNumber: PhoneNumber
   }
 
   input TripCreateInput {
@@ -146,4 +130,4 @@ export default gql`
     currency: Currency!
     price: PositiveInt!
   }
-`
+`;

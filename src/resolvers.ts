@@ -74,20 +74,16 @@ export const resolvers = {
       user.token = jwt.sign({ _id: user._id }, environment.secret);
       return user;
     },
-    async updateUser(_: any, userDetails: MutationUpdateUserArgs) {
-      // if (!userDetails) throw Error('No user details provided!');
-      // for (const propName in userDetails) {
-      //   if (!userDetails[propName]) delete userDetails[propName];
-      // }
-      const outdatedUserDetails = await User.findOne({
-        email: userDetails.email,
-      });
-      const updatedUserDetails = Object.assign(
-        outdatedUserDetails,
-        userDetails
-      );
+    async updateUser(_: any, userDetails: MutationUpdateUserArgs, ctx: any) {
+      if (userDetails.password) {
+        userDetails.password = await bcrypt.hash(
+          userDetails.password,
+          environment.saltRound
+        );
+      }
+      const updatedUserDetails = Object.assign(ctx.user, userDetails);
       const updatedUser = await User.findOneAndUpdate(
-        { email: userDetails.email },
+        { _id: ctx.user._id },
         updatedUserDetails,
         { new: true }
       ).exec();
