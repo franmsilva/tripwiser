@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var apollo_server_1 = require("apollo-server");
-var graphql_scalars_1 = require("graphql-scalars");
 var auth_1 = require("./auth");
 var directives_1 = require("./directives");
 var environment_1 = require("./environment");
@@ -22,14 +21,6 @@ var server = new apollo_server_1.ApolloServer({
         var user = auth_1.getUserFromToken(token);
         return { user: user };
     },
-    mocks: {
-        DateTime: graphql_scalars_1.DateTimeMock,
-        EmailAddress: graphql_scalars_1.EmailAddressMock,
-        PhoneNumber: graphql_scalars_1.PhoneNumberMock,
-        Currency: graphql_scalars_1.CurrencyMock,
-        PositiveInt: graphql_scalars_1.PositiveIntMock,
-    },
-    mockEntireSchema: false,
     introspection: environment_1.environment.apollo.introspection,
     playground: environment_1.environment.apollo.playground,
 });
