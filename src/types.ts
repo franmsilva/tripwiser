@@ -56,7 +56,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   registerUser: User;
   updateUser: User;
-  createTrip: Trip;
+  createTrip: User;
   updateTrip: Trip;
   deleteTrip: Scalars['Boolean'];
 };
@@ -352,7 +352,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   registerUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterUserArgs, never>>;
   updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationUpdateUserArgs, never>>;
-  createTrip?: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<MutationCreateTripArgs, never>>;
+  createTrip?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateTripArgs, never>>;
   updateTrip?: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<MutationUpdateTripArgs, '_id' | 'booked'>>;
   deleteTrip?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTripArgs, 'tripId'>>;
 };

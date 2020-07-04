@@ -55,6 +55,21 @@ var flight_model_1 = __importDefault(require("./models/flight.model"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var environment_1 = require("./environment");
+function matchSearch(place, searchValue) {
+    console.log(place);
+    place = place.toLowerCase();
+    searchValue = searchValue.toLowerCase();
+    var itemChar = place.charAt(searchValue.length - 1);
+    var searchChar = searchValue.charAt(searchValue.length - 1);
+    if (itemChar === searchChar) {
+        return place.includes(searchValue);
+    }
+}
+function filterOptions(searchValue, options) {
+    return options.filter(function (place) {
+        return matchSearch(place.cityName, searchValue);
+    });
+}
 exports.resolvers = {
     Query: {
         login: function (_, _a) {
@@ -107,7 +122,7 @@ exports.resolvers = {
                             })];
                         case 1:
                             placeArr = _b.sent();
-                            return [2, placeArr];
+                            return [2, filterOptions(cityNameSearch, placeArr)];
                     }
                 });
             });
@@ -161,7 +176,7 @@ exports.resolvers = {
         createTrip: function (_, _a) {
             var tripInput = _a.tripInput;
             return __awaiter(this, void 0, void 0, function () {
-                var flights, _i, flights_1, flight, flightDB, trip;
+                var flights, _i, flights_1, flight, flightDB, trip, userDoc;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
@@ -185,53 +200,44 @@ exports.resolvers = {
                         case 4: return [4, trip_model_1.default.create(tripInput)];
                         case 5:
                             trip = _b.sent();
-                            return [4, user_model_1.default.findOneAndUpdate({ _id: trip.creator }, { $push: { trips: trip._id } })];
+                            return [4, user_model_1.default.findOneAndUpdate({ _id: trip.creator }, { $push: { trips: trip._id } }, { new: true }).populate({
+                                    path: 'trips',
+                                    model: trip_model_1.default,
+                                    populate: [
+                                        {
+                                            path: 'startLocation endLocation destinations',
+                                            model: place_model_1.default,
+                                        },
+                                        {
+                                            path: 'flights',
+                                            model: flight_model_1.default,
+                                            populate: {
+                                                path: 'origin destination',
+                                                model: place_model_1.default,
+                                            },
+                                        },
+                                    ],
+                                })];
                         case 6:
-                            _b.sent();
-                            return [2, trip];
+                            userDoc = _b.sent();
+                            return [2, userDoc];
                     }
                 });
             });
         },
         updateTrip: function (_, _a) {
-            var tripInput = _a.tripInput;
+            var _id = _a._id, booked = _a.booked;
             return __awaiter(this, void 0, void 0, function () {
-                var trip, flights, i, flightDB, updateTrip;
+                var trip;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
-                        case 0:
-                            if (!tripInput)
-                                throw Error('No trip details provided!');
-                            return [4, trip_model_1.default.findById(tripInput._id)];
+                        case 0: return [4, trip_model_1.default.findById(_id)];
                         case 1:
                             trip = _b.sent();
                             if (!trip)
                                 throw new Error('trip not found');
-                            return [4, flight_model_1.default.deleteMany({
-                                    _id: {
-                                        $in: trip.flights,
-                                    },
-                                })];
-                        case 2:
-                            _b.sent();
-                            flights = tripInput.flights;
-                            tripInput.flights = [];
-                            if (!(flights && flights.length > 0)) return [3, 6];
-                            i = 0;
-                            _b.label = 3;
-                        case 3:
-                            if (!(i < flights.length)) return [3, 6];
-                            return [4, flight_model_1.default.create(flights[i])];
-                        case 4:
-                            flightDB = _b.sent();
-                            tripInput.flights.push(flightDB._id);
-                            _b.label = 5;
-                        case 5:
-                            i++;
-                            return [3, 3];
-                        case 6:
-                            updateTrip = Object.assign(trip, tripInput);
-                            return [4, trip_model_1.default.findOneAndUpdate({ _id: tripInput._id }, updateTrip, {
+                            trip.booked = booked;
+                            return [4, trip_model_1.default.findOneAndUpdate({ _id: _id }, trip, {
                                     new: true,
                                 }).populate([
                                     {
@@ -247,7 +253,7 @@ exports.resolvers = {
                                         },
                                     },
                                 ])];
-                        case 7: return [2, _b.sent()];
+                        case 2: return [2, _b.sent()];
                     }
                 });
             });
