@@ -111,28 +111,29 @@ export const resolvers = {
 
       return trip;
     },
-    async updateTrip(_: any, { tripInput }: MutationUpdateTripArgs) {
-      if (!tripInput) throw Error('No trip details provided!');
-      const trip = await Trip.findById(tripInput._id);
+    async updateTrip(_: any, { _id, booked }: MutationUpdateTripArgs) {
+     
+      const trip = await Trip.findById(_id);
       if (!trip) throw new Error('trip not found');
-      await Flight.deleteMany({
-        _id: {
-          $in: trip.flights,
-        },
-      });
-      //fill new flights
-      const { flights } = tripInput;
-      tripInput.flights = [];
-      if (flights && flights.length > 0) {
-        for (let i = 0; i < flights.length; i++) {
-          const flightDB = await Flight.create(flights[i]);
-          tripInput.flights.push(flightDB._id);
-        }
-      }
+      // await Flight.deleteMany({
+      //   _id: {
+      //     $in: trip.flights,
+      //   },
+      // });
+      // //fill new flights
+      // const { flights } = tripInput;
+      // tripInput.flights = [];
+      // if (flights && flights.length > 0) {
+      //   for (let i = 0; i < flights.length; i++) {
+      //     const flightDB = await Flight.create(flights[i]);
+      //     tripInput.flights.push(flightDB._id);
+      //   }
+      // }
       //create updated trip
-      const updateTrip = Object.assign(trip, tripInput);
+      // const updateTrip = Object.assign(trip, tripInput);
+      trip.booked = booked;
       //update in db
-      return await Trip.findOneAndUpdate({ _id: tripInput._id }, updateTrip, {
+      return await Trip.findOneAndUpdate({ _id }, trip, {
         new: true,
       }).populate([
         {

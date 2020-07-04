@@ -30,7 +30,7 @@ export default gql`
       phoneNumber: PhoneNumber
     ): User! @authentication
     createTrip(tripInput: TripCreateInput): Trip! @authentication
-    updateTrip(tripInput: TripUpdateInput): Trip! @authentication
+    updateTrip(_id: ID!, booked: Boolean!): Trip! @authentication
     deleteTrip(tripId: String!): Boolean! @authentication
   }
 
