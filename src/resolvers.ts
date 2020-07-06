@@ -18,6 +18,9 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { environment } from './environment';
 
+//Mailgun
+import { welcomeMail, bookedTrip } from './emailservice';
+
 // TS Types
 import {
   QueryLoginArgs,
@@ -91,6 +94,7 @@ export const resolvers = {
       );
       const user = await User.create(userDetails);
       user.token = jwt.sign({ _id: user._id }, environment.secret);
+      welcomeMail(user.email, user.firstName+user.lastName);
       return user;
     },
     async updateUser(_: any, userDetails: MutationUpdateUserArgs, ctx: any) {
@@ -108,7 +112,7 @@ export const resolvers = {
       ).exec();
       return updatedUser;
     },
-    async createTrip(_: any, { tripInput }: MutationCreateTripArgs) {
+    async createTrip(_: any, { tripInput }: MutationCreateTripArgs, ctx: any) {
       if (!tripInput) throw Error('No trip details provided!');
       const flights = [...tripInput.flights];
       tripInput.flights = [];
@@ -145,31 +149,31 @@ export const resolvers = {
           },
         ],
       });
-
+      if (trip.booked) bookedTrip(ctx.user.email, ctx.user.firstName, trip);
       return userDoc;
     },
-    async updateTrip(_: any, { _id, booked }: MutationUpdateTripArgs) {
-     
+    async updateTrip(_: any, { _id, booked }: MutationUpdateTripArgs, ctx: any) {
       const trip = await Trip.findById(_id);
       if (!trip) throw new Error('trip not found');
       // await Flight.deleteMany({
-      //   _id: {
-      //     $in: trip.flights,
-      //   },
-      // });
-      // //fill new flights
-      // const { flights } = tripInput;
-      // tripInput.flights = [];
-      // if (flights && flights.length > 0) {
-      //   for (let i = 0; i < flights.length; i++) {
-      //     const flightDB = await Flight.create(flights[i]);
-      //     tripInput.flights.push(flightDB._id);
-      //   }
-      // }
-      //create updated trip
-      // const updateTrip = Object.assign(trip, tripInput);
-      trip.booked = booked;
-      //update in db
+        //   _id: {
+          //     $in: trip.flights,
+          //   },
+          // });
+          // //fill new flights
+          // const { flights } = tripInput;
+          // tripInput.flights = [];
+          // if (flights && flights.length > 0) {
+            //   for (let i = 0; i < flights.length; i++) {
+              //     const flightDB = await Flight.create(flights[i]);
+              //     tripInput.flights.push(flightDB._id);
+              //   }
+              // }
+              //create updated trip
+              // const updateTrip = Object.assign(trip, tripInput);
+              trip.booked = booked;
+              //update in db
+      if (booked) bookedTrip(ctx.user.email, ctx.user.firstName, trip);
       return await Trip.findOneAndUpdate({ _id }, trip, {
         new: true,
       }).populate([
