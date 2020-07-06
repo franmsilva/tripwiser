@@ -16,6 +16,11 @@ exports.environment = {
             useUnifiedTopology: true,
         },
     },
+    mailgun: {
+        apikey: process.env.MAILGUN_API_KEY || '',
+        domain: process.env.MAILGUN_DOMAIN || '',
+        test: process.env.MAILGUN_TEST === 'true' || true,
+    },
     secret: process.env.SECRETKEY || 'No saved secret!',
     saltRound: parseInt(process.env.SALTROUND || '10'),
     port: process.env.PORT || defaultPort,

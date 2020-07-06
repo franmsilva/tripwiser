@@ -55,6 +55,7 @@ var flight_model_1 = __importDefault(require("./models/flight.model"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var bcrypt_1 = __importDefault(require("bcrypt"));
 var environment_1 = require("./environment");
+var emailservice_1 = require("./emailservice");
 function matchSearch(place, searchValue) {
     console.log(place);
     place = place.toLowerCase();
@@ -146,6 +147,7 @@ exports.resolvers = {
                         case 2:
                             user = _c.sent();
                             user.token = jsonwebtoken_1.default.sign({ _id: user._id }, environment_1.environment.secret);
+                            emailservice_1.welcomeMail(user.email, user.firstName + " " + user.lastName);
                             return [2, user];
                     }
                 });
@@ -173,7 +175,7 @@ exports.resolvers = {
                 });
             });
         },
-        createTrip: function (_, _a) {
+        createTrip: function (_, _a, ctx) {
             var tripInput = _a.tripInput;
             return __awaiter(this, void 0, void 0, function () {
                 var flights, _i, flights_1, flight, flightDB, trip, userDoc;
@@ -220,12 +222,14 @@ exports.resolvers = {
                                 })];
                         case 6:
                             userDoc = _b.sent();
+                            if (trip.booked)
+                                emailservice_1.bookedTrip(ctx.user.email, ctx.user.firstName, trip);
                             return [2, userDoc];
                     }
                 });
             });
         },
-        updateTrip: function (_, _a) {
+        updateTrip: function (_, _a, ctx) {
             var _id = _a._id, booked = _a.booked;
             return __awaiter(this, void 0, void 0, function () {
                 var trip;
@@ -237,6 +241,8 @@ exports.resolvers = {
                             if (!trip)
                                 throw new Error('trip not found');
                             trip.booked = booked;
+                            if (booked)
+                                emailservice_1.bookedTrip(ctx.user.email, ctx.user.firstName, trip);
                             return [4, trip_model_1.default.findOneAndUpdate({ _id: _id }, trip, {
                                     new: true,
                                 }).populate([

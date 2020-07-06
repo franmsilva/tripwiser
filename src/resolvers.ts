@@ -94,7 +94,7 @@ export const resolvers = {
       );
       const user = await User.create(userDetails);
       user.token = jwt.sign({ _id: user._id }, environment.secret);
-      welcomeMail(user.email, user.firstName+user.lastName);
+      welcomeMail(user.email, `${user.firstName} ${user.lastName}`);
       return user;
     },
     async updateUser(_: any, userDetails: MutationUpdateUserArgs, ctx: any) {

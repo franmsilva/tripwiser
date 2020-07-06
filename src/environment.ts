@@ -17,6 +17,7 @@ interface Environment {
   mailgun: {
     apikey: string,
     domain: string,
+    test: boolean,
   }
   secret: string;
   saltRound: number;
@@ -40,6 +41,7 @@ export const environment: Environment = {
   mailgun: {
     apikey: process.env.MAILGUN_API_KEY || '',
     domain: process.env.MAILGUN_DOMAIN || '',
+    test:  process.env.MAILGUN_TEST === 'true' || true,
   },
   secret: process.env.SECRETKEY || 'No saved secret!',
   saltRound: parseInt(process.env.SALTROUND || '10'),
