@@ -33,6 +33,7 @@ export type Query = {
   login: User;
   logout: User;
   places: Array<Place>;
+  placeByAiportId: Array<Place>;
 };
 
 
@@ -50,6 +51,11 @@ export type QueryLogoutArgs = {
 
 export type QueryPlacesArgs = {
   cityNameSearch: Scalars['String'];
+};
+
+
+export type QueryPlaceByAiportIdArgs = {
+  airportId: Scalars['String'];
 };
 
 export type Mutation = {
@@ -347,6 +353,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
   logout?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryLogoutArgs, 'email' | 'password'>>;
   places?: Resolver<Array<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<QueryPlacesArgs, 'cityNameSearch'>>;
+  placeByAiportId?: Resolver<Array<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<QueryPlaceByAiportIdArgs, 'airportId'>>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {

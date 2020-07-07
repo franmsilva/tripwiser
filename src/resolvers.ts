@@ -30,23 +30,24 @@ import {
   MutationUpdateTripArgs,
   MutationDeleteTripArgs,
   QueryPlacesArgs,
+  QueryPlaceByAiportIdArgs,
 } from './types';
 
-function matchSearch (place: string, searchValue: string) {
-  console.log(place)
+function matchSearch(place: string, searchValue: string) {
+  console.log(place);
   place = place.toLowerCase();
   searchValue = searchValue.toLowerCase();
   const itemChar = place.charAt(searchValue.length - 1);
-  const searchChar = searchValue.charAt(searchValue.length - 1)
+  const searchChar = searchValue.charAt(searchValue.length - 1);
   if (itemChar === searchChar) {
     return place.includes(searchValue);
   }
 }
 
-function filterOptions (searchValue: string, options: any) {
+function filterOptions(searchValue: string, options: any) {
   return options.filter((place: any) => {
     return matchSearch(place.cityName, searchValue);
-  })
+  });
 }
 
 export const resolvers = {
@@ -82,7 +83,13 @@ export const resolvers = {
       });
 
       return filterOptions(cityNameSearch, placeArr);
+    },
+    async placeByAiportId(_: any, { airportId }: QueryPlaceByAiportIdArgs) {
+      const place = await Place.findOne({
+        airportId: airportId,
+      });
 
+      return place;
     },
   },
   Mutation: {
@@ -130,7 +137,7 @@ export const resolvers = {
       const userDoc = await User.findOneAndUpdate(
         { _id: trip.creator },
         { $push: { trips: trip._id } },
-        { new: true}
+        { new: true }
       ).populate({
         path: 'trips',
         model: Trip,
@@ -152,27 +159,31 @@ export const resolvers = {
       if (trip.booked) bookedTrip(ctx.user.email, ctx.user.firstName, trip);
       return userDoc;
     },
-    async updateTrip(_: any, { _id, booked }: MutationUpdateTripArgs, ctx: any) {
+    async updateTrip(
+      _: any,
+      { _id, booked }: MutationUpdateTripArgs,
+      ctx: any
+    ) {
       const trip = await Trip.findById(_id);
       if (!trip) throw new Error('trip not found');
       // await Flight.deleteMany({
-        //   _id: {
-          //     $in: trip.flights,
-          //   },
-          // });
-          // //fill new flights
-          // const { flights } = tripInput;
-          // tripInput.flights = [];
-          // if (flights && flights.length > 0) {
-            //   for (let i = 0; i < flights.length; i++) {
-              //     const flightDB = await Flight.create(flights[i]);
-              //     tripInput.flights.push(flightDB._id);
-              //   }
-              // }
-              //create updated trip
-              // const updateTrip = Object.assign(trip, tripInput);
-              trip.booked = booked;
-              //update in db
+      //   _id: {
+      //     $in: trip.flights,
+      //   },
+      // });
+      // //fill new flights
+      // const { flights } = tripInput;
+      // tripInput.flights = [];
+      // if (flights && flights.length > 0) {
+      //   for (let i = 0; i < flights.length; i++) {
+      //     const flightDB = await Flight.create(flights[i]);
+      //     tripInput.flights.push(flightDB._id);
+      //   }
+      // }
+      //create updated trip
+      // const updateTrip = Object.assign(trip, tripInput);
+      trip.booked = booked;
+      //update in db
       if (booked) bookedTrip(ctx.user.email, ctx.user.firstName, trip);
       return await Trip.findOneAndUpdate({ _id }, trip, {
         new: true,
