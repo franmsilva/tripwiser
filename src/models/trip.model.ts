@@ -20,7 +20,9 @@ export interface ITrip extends Document {
   price: number;
 }
 
-interface TripStaticModel extends Model<ITrip> {}
+interface TripStaticModel extends Model<ITrip> {
+  sendSMSReminder(): Promise<any>;
+}
 
 const TripSchema = new Schema(
   {
@@ -92,5 +94,5 @@ const sendToUsers = (users: IUser[]) => {
   });
 };
 
-const Trip = mongoose.model<ITrip>('Trip', TripSchema);
+const Trip = mongoose.model<ITrip, TripStaticModel>('Trip', TripSchema);
 export default Trip;

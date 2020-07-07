@@ -21,6 +21,11 @@ exports.environment = {
         domain: process.env.MAILGUN_DOMAIN || '',
         test: process.env.MAILGUN_TEST === 'true' || true,
     },
+    twilio: {
+        sid: process.env.TWILIO_SID || '',
+        token: process.env.TWILIO_TOKEN || '',
+        phoneNumber: process.env.TWILIO_PHONENUMBER || '',
+    },
     secret: process.env.SECRETKEY || 'No saved secret!',
     saltRound: parseInt(process.env.SALTROUND || '10'),
     port: process.env.PORT || defaultPort,
