@@ -18,6 +18,7 @@ export default gql`
     login(email: EmailAddress!, password: String!): User!
     logout(email: EmailAddress!, password: String!): User!
     places(cityNameSearch: String!): [Place!]!
+    placeByAiportId(airportId: String!): Place!
   }
 
   type Mutation {
