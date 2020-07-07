@@ -12,4 +12,5 @@ exports.sendSMS = function (options) {
         if (err)
             console.error(err);
     });
+    return;
 };

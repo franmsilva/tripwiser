@@ -1,11 +1,11 @@
 import Cron from 'cron';
-const CronJob = Cron.CronJob;
 import  reminderWorker  from './workers/reminderWorkers';
+const CronJob = Cron.CronJob;
 
  const schedulerFactory = () => {
   return {
     start: () => {
-        new CronJob('0 18 * * *', () => {
+        new CronJob('30 20 * * *', () => {
             console.log(`running trip notification worker ${new Date()}`);
             reminderWorker.run();
         }, null, true, '')

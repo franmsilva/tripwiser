@@ -5,6 +5,7 @@ import { IFlight } from './flight.model';
 import { IPlace } from './place.model';
 import { environment } from '../environment';
 import { sendSMS } from '../twilio';
+import startOfDay from 'date-fns/startOfDay';
 
 const Schema = mongoose.Schema;
 
@@ -18,6 +19,7 @@ export interface ITrip extends Document {
   flights: IFlight['_id'];
   currency: string;
   price: number;
+  createdAt?: Date;
 }
 
 interface TripStaticModel extends Model<ITrip> {
@@ -68,18 +70,25 @@ const TripSchema = new Schema(
 );
 
 TripSchema.statics.sendSMSReminder = async function () {
-  const dayold = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
-  const tripsReminded = await Trip.find({ created_at: { $gte: dayold } });
-  let ids: string[] = [];
-  tripsReminded.reduce((trip) => {
-    if (ids.includes(trip.creator)) return trip;
-    ids = [...ids, trip.creator];
-    return trip;
+  const dayold = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate()-5)
+  const tripsReminded = await Trip.find({
+    createdAt: {$lte: new Date(), $gte: dayold },
   });
-  if (ids.length > 0) {
-    const users = await User.find(ids);
-    sendToUsers(users);
+  let ids: string[] = [];
+  if (tripsReminded.length === 0) {
+    console.log('no trips');
+    return;
   }
+  tripsReminded.forEach((trip) => {
+    if (ids.includes(trip.creator)) return;
+    ids = [...ids, trip.creator];
+    return;
+  });
+  const users = await User.find({ _id: { $in: ids } });
+  sendToUsers(users);
+  return;
 };
 
 const sendToUsers = (users: IUser[]) => {
@@ -88,9 +97,10 @@ const sendToUsers = (users: IUser[]) => {
     const option = {
       to: user.phoneNumber,
       from: environment.twilio.phoneNumber,
-      body: `Hello ${user.firstName} from tripWiser ju still have open trips in you wishlist`,
+      body: `Hello ${user.firstName} from tripWiser you still have open trips in you wishlist`,
     };
     sendSMS(option);
+    return;
   });
 };
 

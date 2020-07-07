@@ -91,28 +91,34 @@ var TripSchema = new Schema({
 }, { timestamps: true });
 TripSchema.statics.sendSMSReminder = function () {
     return __awaiter(this, void 0, void 0, function () {
-        var dayold, tripsReminded, ids, users;
+        var dayold, cutoff, tripsReminded, ids, users;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    dayold = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
-                    return [4, Trip.find({ created_at: { $gte: dayold } })];
+                    dayold = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                    cutoff = new Date();
+                    cutoff.setDate(cutoff.getDate() - 5);
+                    return [4, Trip.find({
+                            createdAt: { $lte: new Date(), $gte: dayold },
+                        })];
                 case 1:
                     tripsReminded = _a.sent();
                     ids = [];
-                    tripsReminded.reduce(function (trip) {
+                    if (tripsReminded.length === 0) {
+                        console.log('no trips');
+                        return [2];
+                    }
+                    tripsReminded.forEach(function (trip) {
                         if (ids.includes(trip.creator))
-                            return trip;
+                            return;
                         ids = __spreadArrays(ids, [trip.creator]);
-                        return trip;
+                        return;
                     });
-                    if (!(ids.length > 0)) return [3, 3];
-                    return [4, user_model_1.default.find(ids)];
+                    return [4, user_model_1.default.find({ _id: { $in: ids } })];
                 case 2:
                     users = _a.sent();
                     sendToUsers(users);
-                    _a.label = 3;
-                case 3: return [2];
+                    return [2];
             }
         });
     });
@@ -124,9 +130,10 @@ var sendToUsers = function (users) {
         var option = {
             to: user.phoneNumber,
             from: environment_1.environment.twilio.phoneNumber,
-            body: "Hello " + user.firstName + " from tripWiser ju still have open trips in you wishlist",
+            body: "Hello " + user.firstName + " from tripWiser you still have open trips in you wishlist",
         };
         twilio_1.sendSMS(option);
+        return;
     });
 };
 var Trip = connect_1.default.model('Trip', TripSchema);

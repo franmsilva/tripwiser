@@ -7,5 +7,6 @@ export const sendSMS = (options :MessageListInstanceCreateOptions) => {
     const client =   Twilio(environment.twilio.sid, environment.twilio.token);
     client.messages.create(options, (err) => {
         if (err) console.error(err);
-    } )
+    } );
+    return
 }
