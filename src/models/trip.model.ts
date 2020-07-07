@@ -20,9 +20,7 @@ export interface ITrip extends Document {
   price: number;
 }
 
-interface TripStaticModel extends Model<ITrip> {
-
-}
+interface TripStaticModel extends Model<ITrip> {}
 
 const TripSchema = new Schema(
   {
@@ -67,33 +65,32 @@ const TripSchema = new Schema(
   { timestamps: true }
 );
 
-TripSchema.statics.sendSMSReminder = async function ()  {
-  const dayold = new Date(new Date().getTime() - (24 * 60 * 60 * 1000));
-  const tripsReminded = await Trip.find({ "created_at": { "$gte": dayold } });
+TripSchema.statics.sendSMSReminder = async function () {
+  const dayold = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
+  const tripsReminded = await Trip.find({ created_at: { $gte: dayold } });
   let ids: string[] = [];
-   tripsReminded.reduce((trip) => {
-      if (ids.includes(trip.creator)) return trip
-      ids = [...ids, trip.creator];
-      return trip;
+  tripsReminded.reduce((trip) => {
+    if (ids.includes(trip.creator)) return trip;
+    ids = [...ids, trip.creator];
+    return trip;
   });
-   if (ids.length > 0) {
+  if (ids.length > 0) {
     const users = await User.find(ids);
     sendToUsers(users);
   }
-  
 };
 
-const sendToUsers = (users: IUser[])  => {
+const sendToUsers = (users: IUser[]) => {
   users.forEach((user) => {
     if (!user.phoneNumber) return;
     const option = {
       to: user.phoneNumber,
-      from : environment.twilio.phoneNumber,
-      body: `Hello ${user.firstName} from tripWiser ju still have open trips in you wishlist`
-    }
+      from: environment.twilio.phoneNumber,
+      body: `Hello ${user.firstName} from tripWiser ju still have open trips in you wishlist`,
+    };
     sendSMS(option);
   });
-}
+};
 
 const Trip = mongoose.model<ITrip>('Trip', TripSchema);
 export default Trip;
