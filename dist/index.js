@@ -46,7 +46,7 @@ var environment_1 = require("./environment");
 var resolvers_1 = require("./resolvers");
 var type_defs_1 = __importDefault(require("./type-defs"));
 var scheduler_1 = __importDefault(require("./scheduler"));
-scheduler_1.default();
+scheduler_1.default().start();
 var server = new apollo_server_1.ApolloServer({
     resolvers: resolvers_1.resolvers,
     typeDefs: type_defs_1.default,
