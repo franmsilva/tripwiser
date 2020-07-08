@@ -34,7 +34,6 @@ import {
 } from './types';
 
 function matchSearch(place: string, searchValue: string) {
-  console.log(place);
   place = place.toLowerCase();
   searchValue = searchValue.toLowerCase();
   const itemChar = place.charAt(searchValue.length - 1);

@@ -57,7 +57,6 @@ var bcrypt_1 = __importDefault(require("bcrypt"));
 var environment_1 = require("./environment");
 var emailservice_1 = require("./emailservice");
 function matchSearch(place, searchValue) {
-    console.log(place);
     place = place.toLowerCase();
     searchValue = searchValue.toLowerCase();
     var itemChar = place.charAt(searchValue.length - 1);
