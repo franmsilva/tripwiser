@@ -216,14 +216,31 @@ export const resolvers = {
           }
         }
       }
-      await User.findByIdAndUpdate(user.id, user);
+      const populatedUser = await User.findByIdAndUpdate(user.id, user).populate({
+        path: 'trips',
+        model: Trip,
+        populate: [
+          {
+            path: 'startLocation endLocation destinations',
+            model: Place,
+          },
+          {
+            path: 'flights',
+            model: Flight,
+            populate: {
+              path: 'origin destination',
+              model: Place,
+            },
+          },
+        ],
+      });
       await Flight.deleteMany({
         _id: {
           $in: trip.flights,
         },
       });
       await Trip.findByIdAndDelete(tripId);
-      return true;
+      return populatedUser;
     },
   },
 

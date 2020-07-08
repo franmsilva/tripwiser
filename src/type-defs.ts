@@ -32,7 +32,7 @@ export default gql`
     ): User! @authentication
     createTrip(tripInput: TripCreateInput): User! @authentication
     updateTrip(_id: ID!, booked: Boolean!): Trip! @authentication
-    deleteTrip(tripId: String!): Boolean! @authentication
+    deleteTrip(tripId: String!): User! @authentication
   }
 
   type User {

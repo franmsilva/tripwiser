@@ -24,7 +24,9 @@ const server = new ApolloServer({
   },
   async context({ req }) {
     const token = req.headers.authorization;
+    console.log(token);
     const user = await getUserFromToken(token);
+    console.log('hello', user)
     return { user };
   },
   // mocks: {
