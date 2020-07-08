@@ -33,7 +33,6 @@ export type Query = {
   login: User;
   logout: User;
   places: Array<Place>;
-  placeByAiportId: Array<Place>;
 };
 
 
@@ -53,11 +52,6 @@ export type QueryPlacesArgs = {
   cityNameSearch: Scalars['String'];
 };
 
-
-export type QueryPlaceByAiportIdArgs = {
-  airportId: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   registerUser: User;
@@ -65,6 +59,7 @@ export type Mutation = {
   createTrip: User;
   updateTrip: Trip;
   deleteTrip: Scalars['Boolean'];
+  placeByAiportId: Place;
 };
 
 
@@ -95,6 +90,11 @@ export type MutationUpdateTripArgs = {
 
 export type MutationDeleteTripArgs = {
   tripId: Scalars['String'];
+};
+
+
+export type MutationPlaceByAiportIdArgs = {
+  airportId: Scalars['String'];
 };
 
 export type User = {
@@ -353,7 +353,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryLoginArgs, 'email' | 'password'>>;
   logout?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<QueryLogoutArgs, 'email' | 'password'>>;
   places?: Resolver<Array<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<QueryPlacesArgs, 'cityNameSearch'>>;
-  placeByAiportId?: Resolver<Array<ResolversTypes['Place']>, ParentType, ContextType, RequireFields<QueryPlaceByAiportIdArgs, 'airportId'>>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
@@ -362,6 +361,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createTrip?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationCreateTripArgs, never>>;
   updateTrip?: Resolver<ResolversTypes['Trip'], ParentType, ContextType, RequireFields<MutationUpdateTripArgs, '_id' | 'booked'>>;
   deleteTrip?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationDeleteTripArgs, 'tripId'>>;
+  placeByAiportId?: Resolver<ResolversTypes['Place'], ParentType, ContextType, RequireFields<MutationPlaceByAiportIdArgs, 'airportId'>>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {

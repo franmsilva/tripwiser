@@ -18,7 +18,6 @@ export default gql`
     login(email: EmailAddress!, password: String!): User!
     logout(email: EmailAddress!, password: String!): User!
     places(cityNameSearch: String!): [Place!]!
-    placeByAiportId(airportId: String!): Place!
   }
 
   type Mutation {
@@ -33,6 +32,7 @@ export default gql`
     createTrip(tripInput: TripCreateInput): User! @authentication
     updateTrip(_id: ID!, booked: Boolean!): Trip! @authentication
     deleteTrip(tripId: String!): Boolean! @authentication
+    placeByAirportId(airportId: String!): Place!
   }
 
   type User {

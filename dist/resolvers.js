@@ -127,22 +127,6 @@ exports.resolvers = {
                 });
             });
         },
-        placeByAiportId: function (_, _a) {
-            var airportId = _a.airportId;
-            return __awaiter(this, void 0, void 0, function () {
-                var place;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
-                        case 0: return [4, place_model_1.default.findOne({
-                                airportId: airportId,
-                            })];
-                        case 1:
-                            place = _b.sent();
-                            return [2, place];
-                    }
-                });
-            });
-        },
     },
     Mutation: {
         registerUser: function (_, _a) {
@@ -319,6 +303,22 @@ exports.resolvers = {
                         case 5:
                             _b.sent();
                             return [2, true];
+                    }
+                });
+            });
+        },
+        placeByAirportId: function (_, _a) {
+            var airportId = _a.airportId;
+            return __awaiter(this, void 0, void 0, function () {
+                var place;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0: return [4, place_model_1.default.findOne({
+                                airportId: airportId,
+                            })];
+                        case 1:
+                            place = _b.sent();
+                            return [2, place];
                     }
                 });
             });

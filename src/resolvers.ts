@@ -30,7 +30,7 @@ import {
   MutationUpdateTripArgs,
   MutationDeleteTripArgs,
   QueryPlacesArgs,
-  QueryPlaceByAiportIdArgs,
+  MutationPlaceByAiportIdArgs,
 } from './types';
 
 function matchSearch(place: string, searchValue: string) {
@@ -82,13 +82,6 @@ export const resolvers = {
       });
 
       return filterOptions(cityNameSearch, placeArr);
-    },
-    async placeByAiportId(_: any, { airportId }: QueryPlaceByAiportIdArgs) {
-      const place = await Place.findOne({
-        airportId: airportId,
-      });
-
-      return place;
     },
   },
   Mutation: {
@@ -223,6 +216,13 @@ export const resolvers = {
       });
       await Trip.findByIdAndDelete(tripId);
       return true;
+    },
+    async placeByAirportId(_: any, { airportId }: MutationPlaceByAiportIdArgs) {
+      const place = await Place.findOne({
+        airportId: airportId,
+      });
+
+      return place;
     },
   },
 
