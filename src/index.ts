@@ -13,6 +13,9 @@ import { environment } from './environment';
 import { resolvers } from './resolvers';
 import typeDefs from './type-defs';
 
+import scheduleFactory from './scheduler';
+scheduleFactory().start();
+
 const server = new ApolloServer({
   resolvers,
   typeDefs,

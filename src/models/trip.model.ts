@@ -1,8 +1,11 @@
 import mongoose from '../connect';
-import { Document } from 'mongoose';
-import { IUser } from './user.model';
+import { Document, Model } from 'mongoose';
+import User, { IUser } from './user.model';
 import { IFlight } from './flight.model';
 import { IPlace } from './place.model';
+import { environment } from '../environment';
+import { sendSMS } from '../twilio';
+import startOfDay from 'date-fns/startOfDay';
 
 const Schema = mongoose.Schema;
 
@@ -16,6 +19,11 @@ export interface ITrip extends Document {
   flights: IFlight['_id'];
   currency: string;
   price: number;
+  createdAt?: Date;
+}
+
+interface TripStaticModel extends Model<ITrip> {
+  sendSMSReminder(): Promise<any>;
 }
 
 const TripSchema = new Schema(
@@ -61,4 +69,40 @@ const TripSchema = new Schema(
   { timestamps: true }
 );
 
-export default mongoose.model<ITrip>('Trip', TripSchema);
+TripSchema.statics.sendSMSReminder = async function () {
+  const dayold = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate()-5)
+  const tripsReminded = await Trip.find({
+    createdAt: {$lte: new Date(), $gte: dayold },
+  });
+  let ids: string[] = [];
+  if (tripsReminded.length === 0) {
+    console.log('no trips');
+    return;
+  }
+  tripsReminded.forEach((trip) => {
+    if (ids.includes(trip.creator)) return;
+    ids = [...ids, trip.creator];
+    return;
+  });
+  const users = await User.find({ _id: { $in: ids } });
+  sendToUsers(users);
+  return;
+};
+
+const sendToUsers = (users: IUser[]) => {
+  users.forEach((user) => {
+    if (!user.phoneNumber) return;
+    const option = {
+      to: user.phoneNumber,
+      from: environment.twilio.phoneNumber,
+      body: `Hello ${user.firstName} from tripWiser you still have open trips in you wishlist`,
+    };
+    sendSMS(option);
+    return;
+  });
+};
+
+const Trip = mongoose.model<ITrip, TripStaticModel>('Trip', TripSchema);
+export default Trip;
