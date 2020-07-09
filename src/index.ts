@@ -27,14 +27,6 @@ const server = new ApolloServer({
     const user = await getUserFromToken(token);
     return { user };
   },
-  // mocks: {
-  //   DateTime: DateTimeMock,
-  //   EmailAddress: EmailAddressMock,
-  //   PhoneNumber: PhoneNumberMock,
-  //   Currency: CurrencyMock,
-  //   PositiveInt: PositiveIntMock,
-  // }, // TODO: Remove in PROD.
-  // mockEntireSchema: false, // TODO: Remove in PROD.
   introspection: environment.apollo.introspection,
   playground: environment.apollo.playground,
 });

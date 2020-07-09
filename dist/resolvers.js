@@ -266,7 +266,7 @@ exports.resolvers = {
         deleteTrip: function (_, _a) {
             var tripId = _a.tripId;
             return __awaiter(this, void 0, void 0, function () {
-                var trip, user, i;
+                var trip, user, updatedUser, populatedUser;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
@@ -282,27 +282,42 @@ exports.resolvers = {
                             user = _b.sent();
                             if (!user)
                                 throw new Error('trip has no user smth went really wrong!');
-                            if (user.trips && user.trips.length > 0) {
-                                for (i = 0; i < user.trips.length; i++) {
-                                    if (user.trips[i] === tripId) {
-                                        user.trips.splice(i, 1);
-                                    }
-                                }
-                            }
-                            return [4, user_model_1.default.findByIdAndUpdate(user.id, user)];
+                            user.trips = user.trips.filter(function (trip) { return trip.toString() !== tripId.toString(); });
+                            return [4, user.save()];
                         case 3:
-                            _b.sent();
+                            updatedUser = _b.sent();
+                            return [4, updatedUser.populate({
+                                    path: 'trips',
+                                    model: trip_model_1.default,
+                                    populate: [
+                                        {
+                                            path: 'startLocation endLocation destinations',
+                                            model: place_model_1.default,
+                                        },
+                                        {
+                                            path: 'flights',
+                                            model: flight_model_1.default,
+                                            populate: {
+                                                path: 'origin destination',
+                                                model: place_model_1.default,
+                                            },
+                                        },
+                                    ],
+                                }).execPopulate()];
+                        case 4:
+                            populatedUser = _b.sent();
+                            console.log(populatedUser);
                             return [4, flight_model_1.default.deleteMany({
                                     _id: {
                                         $in: trip.flights,
                                     },
                                 })];
-                        case 4:
-                            _b.sent();
-                            return [4, trip_model_1.default.findByIdAndDelete(tripId)];
                         case 5:
                             _b.sent();
-                            return [2, true];
+                            return [4, trip_model_1.default.findByIdAndDelete(tripId)];
+                        case 6:
+                            _b.sent();
+                            return [2, populatedUser];
                     }
                 });
             });

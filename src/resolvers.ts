@@ -200,22 +200,36 @@ export const resolvers = {
       if (!trip) throw new Error('trip not found');
       const user = await User.findById(trip.creator);
       if (!user) throw new Error('trip has no user smth went really wrong!');
-      //async != filter
-      if (user.trips && user.trips.length > 0) {
-        for (let i = 0; i < user.trips.length; i++) {
-          if (user.trips[i] === tripId) {
-            user.trips.splice(i, 1);
-          }
-        }
-      }
-      await User.findByIdAndUpdate(user.id, user);
+      
+      user.trips = user.trips!.filter((trip) => trip.toString() !== tripId.toString());
+     
+      const updatedUser = await user.save();
+      const populatedUser = await updatedUser.populate({
+        path: 'trips',
+        model: Trip,
+        populate: [
+          {
+            path: 'startLocation endLocation destinations',
+            model: Place,
+          },
+          {
+            path: 'flights',
+            model: Flight,
+            populate: {
+              path: 'origin destination',
+              model: Place,
+            },
+          },
+        ],
+      }).execPopulate();
+      console.log(populatedUser);
       await Flight.deleteMany({
         _id: {
           $in: trip.flights,
         },
       });
       await Trip.findByIdAndDelete(tripId);
-      return true;
+      return populatedUser;
     },
     async placeByAirportId(_: any, { airportId }: MutationPlaceByAiportIdArgs) {
       const place = await Place.findOne({
