@@ -61,11 +61,9 @@ var server = new apollo_server_1.ApolloServer({
                 switch (_b.label) {
                     case 0:
                         token = req.headers.authorization;
-                        console.log(token);
                         return [4, auth_1.getUserFromToken(token)];
                     case 1:
                         user = _b.sent();
-                        console.log('hello', user);
                         return [2, { user: user }];
                 }
             });

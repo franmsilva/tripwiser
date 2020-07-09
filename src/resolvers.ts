@@ -208,15 +208,11 @@ export const resolvers = {
       if (!trip) throw new Error('trip not found');
       const user = await User.findById(trip.creator);
       if (!user) throw new Error('trip has no user smth went really wrong!');
-      //async != filter
-      if (user.trips && user.trips.length > 0) {
-        for (let i = 0; i < user.trips.length; i++) {
-          if (user.trips[i] === tripId) {
-            user.trips.splice(i, 1);
-          }
-        }
-      }
-      const populatedUser = await User.findByIdAndUpdate(user.id, user).populate({
+      
+      user.trips = user.trips!.filter((trip) => trip.toString() !== tripId.toString());
+     
+      const updatedUser = await user.save();
+      const populatedUser = await updatedUser.populate({
         path: 'trips',
         model: Trip,
         populate: [
@@ -233,7 +229,8 @@ export const resolvers = {
             },
           },
         ],
-      });
+      }).execPopulate();
+      console.log(populatedUser);
       await Flight.deleteMany({
         _id: {
           $in: trip.flights,
