@@ -10,7 +10,7 @@ TripWiser is a Progressive Web App that assists users in planning their next mul
 ## Screenshots
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/54188135/87220453-57258500-c353-11ea-85cc-d1fad18a5401.gif" width='75%'/>
+  <img src="https://user-images.githubusercontent.com/54188135/87220453-57258500-c353-11ea-85cc-d1fad18a5401.gif" width='50%'/>
 </p>
 
 
@@ -27,7 +27,7 @@ git clone https://github.com/fmsilva1996/tripwiser.git
 npm install
 ```
 
-3. Create a .env file with the following variables:
+3. In the root, create a .env file with the following variables:
 ```
 PORT=YOUR_PORT_HERE
 APOLLO_INTROSPECTION=true
@@ -79,9 +79,11 @@ npm run generate
 ## Observations 
 
 ### Room For Improvement
-
-### Looking to the Future 
-
+* Extensive testing (>70% Coverage) with Jest and Jasmine
+* Improve the functionality and efficiency of the alternative routes algorithm
+* Improve handling of edge cases to avoid crashes
+* Fix minor CSS glitches 
+* Complete responsiveness with desktop
 
 ## Contributing
 
@@ -93,8 +95,11 @@ Fork the repo and do your thing. Push to your fork and submit a pull request.
 ## Authors
 
 Andrew Cooke - [Github](https://github.com/andrewcooke89) - [LinkedIn](https://www.linkedin.com/in/andrewcooke89/) - [Portfolio](https://andrewcooke.dev/)
+
 Ben Towler - [Github](https://github.com/Ben-Towler) - [LinkedIn](https://www.linkedin.com/in/ben-towler-108913130/)
+
 Francisco Silva - [Github](https://github.com/fmsilva1996) - [LinkedIn](https://www.linkedin.com/in/fmsilva1996/)
+
 Nils Wernecke - [Github](https://github.com/locomocoroco) - [LinkedIn](https://www.linkedin.com/in/niwern/)
 
 
