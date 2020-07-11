@@ -10,7 +10,7 @@ TripWiser is a Progressive Web App that assists users in planning their next mul
 ## Screenshots
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/54188135/87220453-57258500-c353-11ea-85cc-d1fad18a5401.gif" />
+  <img src="https://user-images.githubusercontent.com/54188135/87220453-57258500-c353-11ea-85cc-d1fad18a5401.gif" width='75%'/>
 </p>
 
 
@@ -72,7 +72,7 @@ npm run generate
 ## Built With
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/54188135/87221112-26e0e500-c359-11ea-9fac-de63d8f257a6.png" width='300'/>
+  <img src="https://user-images.githubusercontent.com/54188135/87221112-26e0e500-c359-11ea-9fac-de63d8f257a6.png" />
 </p>
 
 
