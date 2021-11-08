@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@types/node": "^14.0.14",
-    "apollo-server": "^2.15.0",
+    "apollo-server": "^2.25.3",
     "bcrypt": "^5.0.0",
     "cron": "^1.8.2",
     "date-fns": "^2.14.0",
